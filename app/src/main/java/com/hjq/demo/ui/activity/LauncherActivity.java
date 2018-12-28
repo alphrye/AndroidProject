@@ -91,7 +91,7 @@ public class LauncherActivity extends MyActivity
 
     @Override
     public void hasPermission(List<String> granted, boolean isAll) {
-        startActivity(HomeActivity.class);
+        startActivity(LoginActivity.class);
         finish();
     }
 

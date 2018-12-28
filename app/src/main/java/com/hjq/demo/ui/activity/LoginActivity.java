@@ -3,6 +3,7 @@ package com.hjq.demo.ui.activity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.hjq.demo.R;
 import com.hjq.demo.common.MyActivity;
@@ -26,6 +27,8 @@ public class LoginActivity extends MyActivity
     EditText mPasswordView;
     @BindView(R.id.btn_login_commit)
     Button mCommitView;
+    @BindView(R.id.tv_login_forget)
+    TextView mLoginForgetView;
 
     private EditTextInputHelper mEditTextInputHelper;
 
@@ -42,6 +45,7 @@ public class LoginActivity extends MyActivity
     @Override
     protected void initView() {
         mCommitView.setOnClickListener(this);
+        mLoginForgetView.setOnClickListener(this);
         mEditTextInputHelper = new EditTextInputHelper(mCommitView);
         mEditTextInputHelper.addViews(mPhoneView, mPasswordView);
     }
@@ -86,6 +90,8 @@ public class LoginActivity extends MyActivity
             if (mPhoneView.getText().toString().length() != 11) {
                 ToastUtils.show(getResources().getString(R.string.phone_input_error));
             }
+        } else if (v == mLoginForgetView) {
+            startActivity(HomeActivity.class);
         }
     }
 }
