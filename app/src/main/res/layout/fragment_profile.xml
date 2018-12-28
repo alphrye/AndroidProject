@@ -147,6 +147,7 @@
 
             <!--骑行记录-->
             <LinearLayout
+                android:id="@+id/ll_ride_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -158,6 +159,7 @@
                     android:padding="16dp"
                     android:textSize="16sp"
                     android:textColor="@color/color_333333"
+                    android:drawableRight="@mipmap/icon_my_more"
                     android:text="骑行记录"/>
 
                 <View
@@ -169,6 +171,7 @@
 
             <!--我的动态-->
             <LinearLayout
+                android:id="@+id/ll_my_explore"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -180,9 +183,10 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:padding="16dp"
-                    android:text="我的动态"
                     android:textSize="16sp"
-                    android:textColor="@color/color_333333" />
+                    android:textColor="@color/color_333333"
+                    android:drawableRight="@mipmap/icon_my_more"
+                    android:text="我的动态" />
 
                 <View
                     android:layout_width="wrap_content"
@@ -193,6 +197,7 @@
 
             <!--设置-->
             <LinearLayout
+                android:id="@+id/ll_setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -207,6 +212,7 @@
                     android:ellipsize="end"
                     android:textSize="16sp"
                     android:textColor="@color/color_333333"
+                    android:drawableRight="@mipmap/icon_my_more"
                     android:text="设置" />
 
                 <View

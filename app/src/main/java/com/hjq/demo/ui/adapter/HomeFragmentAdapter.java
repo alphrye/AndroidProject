@@ -6,9 +6,9 @@ import android.support.v4.app.FragmentManager;
 import com.hjq.base.BaseFragmentAdapter;
 import com.hjq.demo.common.MyLazyFragment;
 import com.hjq.demo.ui.fragment.TestFragmentD;
-import com.nexuslink.alphrye.CycleFragment;
-import com.nexuslink.alphrye.ExploreFragment;
-import com.nexuslink.alphrye.ProfileFragment;
+import com.nexuslink.alphrye.fragment.CycleFragment;
+import com.nexuslink.alphrye.fragment.ExploreFragment;
+import com.nexuslink.alphrye.fragment.ProfileFragment;
 
 import java.util.List;
 
