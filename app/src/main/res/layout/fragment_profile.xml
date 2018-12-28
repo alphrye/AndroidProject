@@ -9,7 +9,9 @@
         android:id="@+id/tb_profile_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/color_28272A"
         app:backButton="false"
-        app:title="@string/home_nav_profile" />
+        app:title="@string/home_nav_profile"
+        app:titleColor="@color/white" />
 
 </LinearLayout>

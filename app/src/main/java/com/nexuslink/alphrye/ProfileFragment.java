@@ -21,7 +21,7 @@ public class ProfileFragment extends MyLazyFragment {
 
     @Override
     protected int getTitleBarId() {
-        return R.id.tb_explore_title;
+        return R.id.tb_profile_title;
     }
 
     @Override
@@ -32,5 +32,11 @@ public class ProfileFragment extends MyLazyFragment {
     @Override
     protected void initData() {
 
+    }
+
+    @Override
+    public boolean isStatusBarEnabled() {
+        // 使用沉浸式状态栏
+        return !super.isStatusBarEnabled();
     }
 }

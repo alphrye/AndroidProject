@@ -11,4 +11,6 @@
     <color name="colorButtonDisable">#DDDDDD</color>
     <!-- 分割线的颜色 -->
     <color name="colorLine">#ECECEC</color>
+
+    <color name="color_28272A">#28272A</color>
 </resources>

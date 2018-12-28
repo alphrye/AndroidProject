@@ -5,9 +5,6 @@ import android.support.v4.app.FragmentManager;
 
 import com.hjq.base.BaseFragmentAdapter;
 import com.hjq.demo.common.MyLazyFragment;
-import com.hjq.demo.ui.fragment.TestFragmentA;
-import com.hjq.demo.ui.fragment.TestFragmentB;
-import com.hjq.demo.ui.fragment.TestFragmentC;
 import com.hjq.demo.ui.fragment.TestFragmentD;
 import com.nexuslink.alphrye.CycleFragment;
 import com.nexuslink.alphrye.ExploreFragment;
@@ -33,6 +30,6 @@ public final class HomeFragmentAdapter extends BaseFragmentAdapter<MyLazyFragmen
         list.add(CycleFragment.newInstance());
         list.add(ProfileFragment.newInstance());
         //测试
-        list.add(TestFragmentA.newInstance());
+        list.add(TestFragmentD.newInstance());
     }
 }
