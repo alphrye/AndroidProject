@@ -9,6 +9,9 @@ import com.hjq.demo.ui.fragment.TestFragmentA;
 import com.hjq.demo.ui.fragment.TestFragmentB;
 import com.hjq.demo.ui.fragment.TestFragmentC;
 import com.hjq.demo.ui.fragment.TestFragmentD;
+import com.nexuslink.alphrye.CycleFragment;
+import com.nexuslink.alphrye.ExploreFragment;
+import com.nexuslink.alphrye.ProfileFragment;
 
 import java.util.List;
 
@@ -26,9 +29,10 @@ public final class HomeFragmentAdapter extends BaseFragmentAdapter<MyLazyFragmen
 
     @Override
     protected void init(FragmentManager manager, List<MyLazyFragment> list) {
+        list.add(ExploreFragment.newInstance());
+        list.add(CycleFragment.newInstance());
+        list.add(ProfileFragment.newInstance());
+        //测试
         list.add(TestFragmentA.newInstance());
-        list.add(TestFragmentB.newInstance());
-        list.add(TestFragmentC.newInstance());
-        list.add(TestFragmentD.newInstance());
     }
 }

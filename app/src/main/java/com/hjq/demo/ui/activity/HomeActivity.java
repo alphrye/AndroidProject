@@ -68,16 +68,17 @@ public class HomeActivity extends MyActivity implements
     public void onPageSelected(int position) {
         switch (position) {
             case 0:
-                mBottomNavigationView.setSelectedItemId(R.id.menu_home);
+                mBottomNavigationView.setSelectedItemId(R.id.home_explore);
                 break;
             case 1:
-                mBottomNavigationView.setSelectedItemId(R.id.home_found);
+                mBottomNavigationView.setSelectedItemId(R.id.home_cycle);
                 break;
             case 2:
-                mBottomNavigationView.setSelectedItemId(R.id.home_message);
+                mBottomNavigationView.setSelectedItemId(R.id.home_profile);
                 break;
+            //用于测试
             case 3:
-                mBottomNavigationView.setSelectedItemId(R.id.home_me);
+                mBottomNavigationView.setSelectedItemId(R.id.menu_home);
                 break;
         }
     }
@@ -92,16 +93,17 @@ public class HomeActivity extends MyActivity implements
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_home:
+            case R.id.home_explore:
                 mViewPager.setCurrentItem(0);
                 return true;
-            case R.id.home_found:
+            case R.id.home_cycle:
                 mViewPager.setCurrentItem(1);
                 return true;
-            case R.id.home_message:
+            case R.id.home_profile:
                 mViewPager.setCurrentItem(2);
                 return true;
-            case R.id.home_me:
+            //用于测试
+            case R.id.menu_home:
                 mViewPager.setCurrentItem(3);
                 return true;
         }
