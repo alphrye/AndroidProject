@@ -1,4 +1,4 @@
-package com.nexuslink.alphrye.activity;
+package com.nexuslink.alphrye.ui.activity;
 
 import com.hjq.demo.R;
 import com.hjq.demo.common.MyActivity;
@@ -6,17 +6,17 @@ import com.hjq.demo.common.MyActivity;
 /**
  *    author : alphrye
  *    time   : 2018/12/29
- *    desc   : 我的动态页面
+ *    desc   : 设置页面
  */
-public class MyExploreActivity extends MyActivity {
+public class SettingActivity extends MyActivity {
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_my_explore;
+        return R.layout.activity_setting;
     }
 
     @Override
     protected int getTitleBarId() {
-        return R.id.tb_my_explore_title;
+        return R.id.tb_setting_title;
     }
 
     @Override

@@ -123,6 +123,12 @@ dependencies {
     // 圆形的ImageView：https://github.com/hdodenhof/CircleImageView
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+
+    // Gson Converter
+    implementation 'com.squareup.retrofit2:converter-gson:2.0.2'
+
     // RecyclerView：https://github.com/CymChad/BaseRecyclerViewAdapterHelper
     // 工具类集合：https://github.com/Blankj/AndroidUtilCode
     // 图片选择：https://github.com/zhihu/Matisse

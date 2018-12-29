@@ -1,14 +1,14 @@
-package com.nexuslink.alphrye.fragment;
+package com.nexuslink.alphrye.ui.fragment;
 
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.hjq.demo.R;
 import com.hjq.demo.common.MyLazyFragment;
-import com.nexuslink.alphrye.activity.MyAboutActivity;
-import com.nexuslink.alphrye.activity.MyExploreActivity;
-import com.nexuslink.alphrye.activity.RideHistoryActivity;
-import com.nexuslink.alphrye.activity.SettingActivity;
+import com.nexuslink.alphrye.ui.activity.MyAboutActivity;
+import com.nexuslink.alphrye.ui.activity.MyExploreActivity;
+import com.nexuslink.alphrye.ui.activity.RideHistoryActivity;
+import com.nexuslink.alphrye.ui.activity.SettingActivity;
 
 import butterknife.BindView;
 

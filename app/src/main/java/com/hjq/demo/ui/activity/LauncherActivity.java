@@ -1,5 +1,6 @@
 package com.hjq.demo.ui.activity;
 
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -12,10 +13,16 @@ import com.hjq.demo.common.MyActivity;
 import com.hjq.permissions.OnPermission;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
+import com.nexuslink.alphrye.api.CommonApiService;
+import com.nexuslink.alphrye.net.RetrofitWrapper;
+import com.nexuslink.alphrye.net.bean.UserBean;
 
 import java.util.List;
 
 import butterknife.BindView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  *    author : Android 轮子哥
@@ -56,7 +63,37 @@ public class LauncherActivity extends MyActivity
     }
 
     @Override
-    protected void initData() {}
+    protected void initData() {
+        //网络请求
+        Call<UserBean> callBack = RetrofitWrapper
+                .getInstance()
+                .createService(CommonApiService.class)
+                .requestUserProfile();
+        callBack.enqueue(new Callback<UserBean>() {
+            @Override
+            public void onResponse(Call<UserBean> call, Response<UserBean> response) {
+                UserBean body = response.body();
+                if (body == null) {
+                    return;
+                }
+
+                UserBean.UserInfoBean userInfoBean = body.user_info;
+                if (body.user_info != null) {
+                    Log.d("Test", "onResponse: name = " + userInfoBean.user_name);
+                }
+
+                UserBean.RideInfoBean rideInfoBean = body.ride_info;
+                if (rideInfoBean != null) {
+                    Log.d("Test", "onResponse: km = " + rideInfoBean.ride_km + " ride time = " + rideInfoBean .ride_time);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UserBean> call, Throwable t) {
+
+            }
+        });
+    }
 
     private static final int ANIM_TIME = 1000;
 

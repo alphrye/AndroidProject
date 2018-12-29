@@ -1,4 +1,4 @@
-package com.nexuslink.alphrye.activity;
+package com.nexuslink.alphrye.ui.activity;
 
 import com.hjq.demo.R;
 import com.hjq.demo.common.MyActivity;

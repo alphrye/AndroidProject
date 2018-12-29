@@ -66,16 +66,16 @@
         <activity android:name=".ui.activity.DialogActivity" />
 
         <!--设置页面 -->
-        <activity android:name="com.nexuslink.alphrye.activity.SettingActivity" />
+        <activity android:name="com.nexuslink.alphrye.ui.activity.SettingActivity" />
 
         <!--我的动态页面-->
-        <activity android:name="com.nexuslink.alphrye.activity.MyExploreActivity"/>
+        <activity android:name="com.nexuslink.alphrye.ui.activity.MyExploreActivity"/>
 
         <!--骑行记录页面-->
-        <activity android:name="com.nexuslink.alphrye.activity.RideHistoryActivity"/>
+        <activity android:name="com.nexuslink.alphrye.ui.activity.RideHistoryActivity"/>
 
         <!--我的关于页面-->
-        <activity android:name="com.nexuslink.alphrye.activity.MyAboutActivity"/>
+        <activity android:name="com.nexuslink.alphrye.ui.activity.MyAboutActivity"/>
     </application>
 
 </manifest>
