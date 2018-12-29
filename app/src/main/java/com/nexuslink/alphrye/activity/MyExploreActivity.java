@@ -3,6 +3,11 @@ package com.nexuslink.alphrye.activity;
 import com.hjq.demo.R;
 import com.hjq.demo.common.MyActivity;
 
+/**
+ *    author : alphrye
+ *    time   : 2018/12/29
+ *    desc   : 我的动态页面
+ */
 public class MyExploreActivity extends MyActivity {
     @Override
     protected int getLayoutId() {

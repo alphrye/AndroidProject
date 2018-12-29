@@ -73,6 +73,9 @@
 
         <!--骑行记录页面-->
         <activity android:name="com.nexuslink.alphrye.activity.RideHistoryActivity"/>
+
+        <!--我的关于页面-->
+        <activity android:name="com.nexuslink.alphrye.activity.MyAboutActivity"/>
     </application>
 
 </manifest>

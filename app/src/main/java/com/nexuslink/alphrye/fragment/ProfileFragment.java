@@ -5,6 +5,7 @@ import android.widget.LinearLayout;
 
 import com.hjq.demo.R;
 import com.hjq.demo.common.MyLazyFragment;
+import com.nexuslink.alphrye.activity.MyAboutActivity;
 import com.nexuslink.alphrye.activity.MyExploreActivity;
 import com.nexuslink.alphrye.activity.RideHistoryActivity;
 import com.nexuslink.alphrye.activity.SettingActivity;
@@ -21,6 +22,8 @@ public class ProfileFragment extends MyLazyFragment implements View.OnClickListe
     LinearLayout mLlRideHistory;
     @BindView(R.id.ll_my_explore)
     LinearLayout mLlMyExplore;
+    @BindView(R.id.ll_about)
+    LinearLayout mLlAbout;
     @BindView(R.id.ll_setting)
     LinearLayout mLlSetting;
 
@@ -42,6 +45,7 @@ public class ProfileFragment extends MyLazyFragment implements View.OnClickListe
     protected void initView() {
         mLlRideHistory.setOnClickListener(this);
         mLlMyExplore.setOnClickListener(this);
+        mLlAbout.setOnClickListener(this);
         mLlSetting.setOnClickListener(this);
     }
 
@@ -56,6 +60,8 @@ public class ProfileFragment extends MyLazyFragment implements View.OnClickListe
             startActivity(RideHistoryActivity.class);
         } else if (v == mLlMyExplore) {
             startActivity(MyExploreActivity.class);
+        } else if (v == mLlAbout) {
+            startActivity(MyAboutActivity.class);
         } else if (v == mLlSetting) {
             startActivity(SettingActivity.class);
         }
