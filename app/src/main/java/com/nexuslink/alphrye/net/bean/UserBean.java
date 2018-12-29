@@ -5,7 +5,7 @@ package com.nexuslink.alphrye.net.bean;
  *    time   : 2018/12/29
  *    desc   : 用户数据
  */
-public class UserBean extends CommonNetBean<UserBean>{
+public class UserBean {
     public UserInfoBean user_info;
     public RideInfoBean ride_info;
 
