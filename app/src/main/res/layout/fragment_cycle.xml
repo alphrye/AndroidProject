@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <com.hjq.bar.TitleBar
         android:id="@+id/tb_cycle_title"
@@ -10,5 +12,11 @@
         android:layout_height="wrap_content"
         app:backButton="false"
         app:title="@string/home_nav_cycle" />
+    
+    <Button
+        android:id="@+id/btn_switch_flash_light"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="开"/>
 
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.nexuslink.alphrye.net;
+package com.nexuslink.alphrye.net.wrapper;
 
 import android.text.TextUtils;
 
@@ -23,7 +23,7 @@ public class RetrofitWrapper {
 
     public static RetrofitWrapper getInstance () {
         if (mInstance == null) {
-            return new RetrofitWrapper();
+            mInstance = new RetrofitWrapper();
         }
         return mInstance;
     }

@@ -14,7 +14,7 @@ import com.hjq.demo.common.MyActivity;
 import com.hjq.permissions.OnPermission;
 import com.hjq.permissions.Permission;
 import com.hjq.permissions.XXPermissions;
-import com.nexuslink.alphrye.net.RetrofitWrapper;
+import com.nexuslink.alphrye.net.wrapper.RetrofitWrapper;
 import com.nexuslink.alphrye.net.bean.UserBean;
 
 import java.util.List;
