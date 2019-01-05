@@ -1,14 +1,11 @@
 package com.nexuslink.alphrye.ui.fragment;
 
-import android.content.Context;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraManager;
-import android.os.Build;
 import android.view.View;
 import android.widget.Button;
 
 import com.hjq.demo.R;
 import com.hjq.demo.common.MyLazyFragment;
+import com.nexuslink.alphrye.helper.FlashLightHelper;
 
 import butterknife.BindView;
 
@@ -23,7 +20,7 @@ public class CycleFragment extends MyLazyFragment
     Button mBtnSwitchFlashLight;
 
     private boolean isFlashLightOpen;
-    private CameraManager mCameraManager;
+    private FlashLightHelper.OnSwitchCallBack mFlashLightSwitchCallBack;
 
     public static CycleFragment newInstance() {
         return new CycleFragment();
@@ -32,7 +29,7 @@ public class CycleFragment extends MyLazyFragment
     @Override
     public void onClick(View v) {
         if (v == mBtnSwitchFlashLight) {
-            switchFlashLight(!isFlashLightOpen);
+            FlashLightHelper.getInstance().switchFlashLight(!isFlashLightOpen, mFlashLightSwitchCallBack);
         }
     }
 
@@ -54,7 +51,13 @@ public class CycleFragment extends MyLazyFragment
 
     @Override
     protected void initData() {
-
+        mFlashLightSwitchCallBack = new FlashLightHelper.OnSwitchCallBack() {
+            @Override
+            public void onSwitch(boolean b) {
+                isFlashLightOpen = b;
+                refreshNextFlashLightStatus(isFlashLightOpen);
+            }
+        };
     }
 
     @Override
@@ -72,27 +75,5 @@ public class CycleFragment extends MyLazyFragment
             return;
         }
         mBtnSwitchFlashLight.setText(isFlashLightOpen ? "关" : "开");
-    }
-
-    /**
-     * 闪光灯切换
-     * @param b
-     */
-    private void switchFlashLight(boolean b) {
-        //Android版本适配
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            if (mCameraManager == null) {
-                mCameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                try {
-                    mCameraManager.setTorchMode("0", b);
-                } catch (CameraAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-            isFlashLightOpen = b;
-            refreshNextFlashLightStatus(isFlashLightOpen);
-        }
     }
 }
