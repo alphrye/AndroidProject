@@ -19,4 +19,8 @@
         android:layout_height="wrap_content"
         tools:text="开"/>
 
+    <com.nexuslink.alphrye.ui.weight.DashboardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </LinearLayout>
