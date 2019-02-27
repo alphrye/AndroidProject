@@ -2,16 +2,13 @@ package com.hjq.demo.common;
 
 import android.content.Context;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
 import com.hjq.demo.helper.ActivityStackManager;
 import com.hjq.toast.ToastUtils;
 import com.hjq.umeng.UmengHelper;
-import com.nexuslink.alphrye.helper.FlashLightHelper;
+import com.nexuslink.alphrye.sensor.SensorHelper;
 
 /**
  *    author : Android 轮子哥
@@ -19,11 +16,10 @@ import com.nexuslink.alphrye.helper.FlashLightHelper;
  *    time   : 2018/10/18
  *    desc   : 项目中的Application基类
  */
-public class MyApplication extends UIApplication {
-    public static final float VALUE_LX_OPEN_FLASH_LIGHT = 10.0f;
+public class MyApplication extends UIApplication implements SensorHelper.ISensorChangeObserver {
     private static Context sContext;
-    private SensorManager mSensorManager;
-    private SensorEventListener mSensorEventListener;
+
+    private SensorHelper mSensorHelper;
 
     @Override
     public void onCreate() {
@@ -45,28 +41,6 @@ public class MyApplication extends UIApplication {
         initSensor();
     }
 
-    private void initSensor() {
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        Sensor lightSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        mSensorEventListener = new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent event) {
-                if (event.sensor.getType() == Sensor.TYPE_LIGHT) {
-                    float value = event.values[0];
-                    Log.d("yuan", "onSensorChanged: " + "当前亮度 " + value + " lx(勒克斯)");
-                    // TODO: 2019/1/5  本地sp获取状态，检查手动开启，设置状态
-                    FlashLightHelper.getInstance().switchFlashLight(value < VALUE_LX_OPEN_FLASH_LIGHT, null);
-                }
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-            }
-        };
-        mSensorManager.registerListener(mSensorEventListener, lightSensor, SensorManager.SENSOR_DELAY_NORMAL);
-    }
-
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -77,11 +51,30 @@ public class MyApplication extends UIApplication {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        if (mSensorManager != null) {
-            mSensorManager.unregisterListener(mSensorEventListener);
+        mSensorHelper.removeObservers(this);
+        mSensorHelper.unregisterSensorListener();
+    }
+
+    @Override
+    public void onSensorChange(float[] values, int type) {
+        if (type == Sensor.TYPE_LIGHT) {
+            Log.d("Test", "onSensorChange: light:" + values[0]);
         }
     }
 
+    /**
+     * 初始化传感器(初始化后，数据开始获取，添加观察者观察数据)
+     */
+    private void initSensor() {
+        mSensorHelper = SensorHelper.getInstance();
+        mSensorHelper.registerSensorListener();
+        mSensorHelper.addObservers(this);
+    }
+
+    /**
+     * 获取上下文
+     * @return
+     */
     public static Context getContext() {
         return sContext;
     }
