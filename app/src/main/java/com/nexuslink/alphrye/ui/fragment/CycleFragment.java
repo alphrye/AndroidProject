@@ -6,6 +6,7 @@ import android.widget.Button;
 import com.hjq.demo.R;
 import com.hjq.demo.common.MyLazyFragment;
 import com.nexuslink.alphrye.helper.FlashLightHelper;
+import com.nexuslink.alphrye.ui.weight.DashboardView;
 
 import butterknife.BindView;
 
@@ -18,6 +19,8 @@ public class CycleFragment extends MyLazyFragment
         implements View.OnClickListener {
     @BindView(R.id.btn_switch_flash_light)
     Button mBtnSwitchFlashLight;
+    @BindView(R.id.v_dash_board)
+    DashboardView mDashBoardView;
 
     private boolean isFlashLightOpen;
     private FlashLightHelper.OnSwitchCallBack mFlashLightSwitchCallBack;
@@ -47,6 +50,7 @@ public class CycleFragment extends MyLazyFragment
     protected void initView() {
         refreshNextFlashLightStatus(isFlashLightOpen);
         mBtnSwitchFlashLight.setOnClickListener(this);
+        mDashBoardView.updateToValue(15);
     }
 
     @Override

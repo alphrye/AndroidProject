@@ -1,5 +1,6 @@
 package com.nexuslink.alphrye.ui.weight;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 /**
  *    author : alphrye
@@ -35,6 +37,8 @@ public class DashboardView extends View {
 
     private int mCenterCircleRadius;
 
+    private float mCurValue;
+
     public DashboardView(Context context) {
         this(context, null);
     }
@@ -47,7 +51,9 @@ public class DashboardView extends View {
         super(context, attrs, defStyleAttr);
         perDegree = 180 / 36;
         mCenterCircleRadius = 35;
+        mCurValue = 0.0f;
         initPaints();
+        setBackgroundColor(Color.BLACK);
     }
 
     /**
@@ -83,9 +89,9 @@ public class DashboardView extends View {
 
         drawScaleAndNum(canvas, startX, startY);
 
-        drawCenterCircle(canvas, mCenterCircleRadius);
-
         drawSpeedIndicator(canvas, startX, startY, mCenterCircleRadius + LEN_BETWEEN_CIRCLE_AND_INDICATOR);
+
+        drawCenterCircle(canvas, mCenterCircleRadius);
 
         drawSpeedText(canvas);
     }
@@ -112,7 +118,7 @@ public class DashboardView extends View {
                 mScalePaint.setStrokeWidth(STROKE_WIDTH_DEFAULT);
                 canvas.drawLine(startX, startY, longEndX, longEndY, mScalePaint);
                 canvas.save();
-                String text = i + "";
+                String text = i / 2 + "";
                 Rect rect =  new Rect();
                 mLCDPaint.setTextSize(70);
                 mLCDPaint.getTextBounds(text, 0, text.length(), rect);
@@ -137,16 +143,16 @@ public class DashboardView extends View {
     private void drawCenterCircle(Canvas canvas, float radius) {
         canvas.save();
 
-        mIndicatorPaint.setStyle(Paint.Style.STROKE);
         mIndicatorPaint.setShader(null);
 
+        mIndicatorPaint.setColor(Color.BLACK);
+        mIndicatorPaint.setStyle(Paint.Style.FILL);
+        canvas.drawCircle(getWidth() / 2, getHeight() / 2, radius + 25, mIndicatorPaint);
+
         mIndicatorPaint.setColor(Color.parseColor(COLOR_PRIMARY));
+        mIndicatorPaint.setStyle(Paint.Style.STROKE);
         mIndicatorPaint.setStrokeWidth(STROKE_WIDTH_DEFAULT);
         canvas.drawCircle(getWidth() / 2, getHeight() / 2, radius, mIndicatorPaint);
-
-        mIndicatorPaint.setColor(Color.RED);
-        mIndicatorPaint.setStrokeWidth(20);
-        canvas.drawCircle(getWidth() / 2, getHeight() / 2, radius + 30, mIndicatorPaint);
         canvas.restore();
     }
 
@@ -163,11 +169,12 @@ public class DashboardView extends View {
         mIndicatorPaint.setColor(Color.RED);
         LinearGradient mGradient = new LinearGradient(startX, startY, getWidth() / 2, getHeight() / 2, new int[] {Color.parseColor("#00000000"), Color.parseColor("#FF0000")}, null,Shader.TileMode.MIRROR);
         mIndicatorPaint.setShader(mGradient);
-        canvas.rotate(- perDegree * 6, getWidth() / 2, getHeight() / 2);
+        canvas.rotate(- perDegree * 6 + mCurValue * perDegree, getWidth() / 2, getHeight() / 2);
         Path path = new Path();
         path.moveTo(startX, startY);
-        path.lineTo(getWidth() / 2 - 30 - 35, getHeight() / 2 + 20);
-        path.lineTo(getWidth() / 2 - 30 - 35, getHeight() / 2 - 20);
+        path.lineTo(getWidth() / 2 + 30 + 35 + 40, getHeight() / 2 + 25);
+        path.lineTo(getWidth() / 2 + 30 + 35 + 80, getHeight() / 2);
+        path.lineTo(getWidth() / 2 + 30 + 35 + 40, getHeight() / 2 - 25);
         path.close();
         canvas.drawPath(path, mIndicatorPaint);
         canvas.restore();
@@ -198,5 +205,24 @@ public class DashboardView extends View {
         mLCDPaint.setTextSize(60);
         canvas.drawText(tvKmPerHour, startX + speedTvRect.width() + len, startY, mLCDPaint);
         canvas.restore();
+    }
+
+    /**
+     * 更新指示器值
+     * @param value
+     */
+    public void updateToValue(float value) {
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(mCurValue, value);
+        valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mCurValue = (float) animation.getAnimatedValue();
+                invalidate();
+            }
+        });
+        // TODO: 2019/2/28 设置一个最快和最慢时间
+        valueAnimator.setDuration((long) (value * 100));
+        valueAnimator.start();
     }
 }
