@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.fragment.TestFragmentC">
+    tools:context="com.nexuslink.alphrye.ui.fragment.TestFragmentC">
 
     <com.hjq.bar.TitleBar
         android:id="@+id/tb_test_c_title"

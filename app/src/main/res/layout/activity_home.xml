@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.activity.HomeActivity">
+    tools:context="com.nexuslink.alphrye.ui.activity.HomeActivity">
 
     <com.hjq.widget.NoScrollViewPager
         android:id="@+id/vp_home_pager"

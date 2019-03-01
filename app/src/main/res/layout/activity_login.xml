@@ -7,7 +7,7 @@
     android:background="@color/white"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".ui.activity.LoginActivity">
+    tools:context="com.nexuslink.alphrye.ui.activity.LoginActivity">
 
     <com.hjq.bar.TitleBar
         android:id="@+id/tb_login_title"

@@ -5,7 +5,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 
-import com.hjq.demo.common.MyApplication;
+import com.nexuslink.alphrye.common.MyApplication;
 
 /**
  *    author : alphrye

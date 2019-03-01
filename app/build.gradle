@@ -4,7 +4,7 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
-        applicationId "com.hjq.demo"
+        applicationId "com.nexuslink.alphrye.cyctastic"
         minSdkVersion 14
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 10

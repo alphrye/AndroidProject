@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context=".ui.activity.AboutActivity">
+    tools:context="com.nexuslink.alphrye.ui.activity.AboutActivity">
 
     <com.hjq.bar.TitleBar
         android:id="@+id/tb_my_about_title"

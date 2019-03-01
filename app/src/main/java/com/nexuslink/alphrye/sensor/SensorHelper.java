@@ -6,7 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import com.hjq.demo.common.MyApplication;
+import com.nexuslink.alphrye.common.MyApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class SensorHelper implements SensorEventListener {
     /**方向传感器*/
     private Sensor mOrientationSensor;
 
-    private SensorHelper () {
+    private SensorHelper() {
         mSensorManager = (SensorManager) MyApplication.getContext().getSystemService(Context.SENSOR_SERVICE);
         mObservers = new ArrayList<>();
         initSensors();

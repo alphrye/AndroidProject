@@ -3,8 +3,8 @@ package com.nexuslink.alphrye.ui.fragment;
 import android.view.View;
 import android.widget.Button;
 
-import com.hjq.demo.R;
-import com.hjq.demo.common.MyLazyFragment;
+import com.nexuslink.alphrye.common.MyLazyFragment;
+import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.helper.FlashLightHelper;
 import com.nexuslink.alphrye.ui.weight.DashboardView;
 

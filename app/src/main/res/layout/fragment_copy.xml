@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.fragment.CopyFragment">
+    tools:context="com.nexuslink.alphrye.ui.fragment.CopyFragment">
 
     <com.hjq.bar.TitleBar
         android:id="@+id/tb_copy_title"

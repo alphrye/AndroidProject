@@ -1,7 +1,7 @@
 package com.nexuslink.alphrye.ui.fragment;
 
-import com.hjq.demo.R;
-import com.hjq.demo.common.MyLazyFragment;
+import com.nexuslink.alphrye.common.MyLazyFragment;
+import com.nexuslink.alphrye.cyctastic.R;
 
 /**
  *    author : alphrye

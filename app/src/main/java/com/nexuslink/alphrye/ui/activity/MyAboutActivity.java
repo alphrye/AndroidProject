@@ -1,7 +1,7 @@
 package com.nexuslink.alphrye.ui.activity;
 
-import com.hjq.demo.R;
-import com.hjq.demo.common.MyActivity;
+import com.nexuslink.alphrye.common.MyActivity;
+import com.nexuslink.alphrye.cyctastic.R;
 
 
 /**
