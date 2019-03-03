@@ -97,6 +97,10 @@
         <!--我的关于页面-->
         <activity android:name="com.nexuslink.alphrye.ui.activity.MyAboutActivity"/>
 
+        <!--骑行页面-->
+        <activity android:name="com.nexuslink.alphrye.ui.activity.CycleActivity"
+            android:screenOrientation="landscape"/>
+
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="edd516e8445b29e2187c6631e0df42d7"/>

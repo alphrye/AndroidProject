@@ -23,6 +23,9 @@ public class DashboardView extends View {
     private static final String COLOR_PRIMARY = "#FFFFFF";
     private static final int STROKE_WIDTH_DEFAULT = 10;
     private static final int LEN_BETWEEN_CIRCLE_AND_INDICATOR = 35;
+    private static final int WIDTH_DEFALUT = 1080;
+    private static final int HEIGHT_DEFALUT = 1080;
+    private int mDeviation;
 
     /**绘制刻度的画笔*/
     private Paint mScalePaint;
@@ -78,14 +81,28 @@ public class DashboardView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        if (widthMode == MeasureSpec.AT_MOST && heightMode == MeasureSpec.AT_MOST) {
+            int minLen = Math.min(widthSize, heightSize);
+            setMeasuredDimension(minLen, minLen);
+        } else if (widthMode == MeasureSpec.AT_MOST) {
+            setMeasuredDimension(WIDTH_DEFALUT, heightSize);
+        } else if (heightMode == MeasureSpec.AT_MOST){
+            setMeasuredDimension(widthSize, HEIGHT_DEFALUT);
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        mDeviation = getWidth() / 8;
         int startX = 0;
-        int startY = getHeight() / 2;
+        int startY = getHeight() / 2 + mDeviation;
 
         drawScaleAndNum(canvas, startX, startY);
 
@@ -107,11 +124,11 @@ public class DashboardView extends View {
         int longLen = 45;
         int shortLen = 30;
         int longEndX = startX + longLen;
-        int longEndY = getHeight() / 2;
+        int longEndY = getHeight() / 2 + mDeviation;
         int shortEndX = startX + shortLen;
-        int shortEndY = getHeight() / 2;
+        int shortEndY = getHeight() / 2 + mDeviation;
         int len = 30;
-        canvas.rotate(-perDegree * 6, getWidth() / 2, getHeight() / 2);
+        canvas.rotate(-perDegree * 6, getWidth() / 2, getHeight() / 2 + mDeviation);
         for (int i = 0; i < 49; i++) {
             if (i % 6 == 0) {
                 mScalePaint.setColor(Color.RED);
@@ -130,7 +147,7 @@ public class DashboardView extends View {
                 mScalePaint.setStrokeWidth(5);
                 canvas.drawLine(startX, startY, shortEndX, shortEndY, mScalePaint);
             }
-            canvas.rotate(perDegree, getWidth() / 2, getHeight() / 2);
+            canvas.rotate(perDegree, getWidth() / 2, getHeight() / 2 + mDeviation);
         }
         canvas.restore();
     }
@@ -147,12 +164,12 @@ public class DashboardView extends View {
 
         mIndicatorPaint.setColor(Color.BLACK);
         mIndicatorPaint.setStyle(Paint.Style.FILL);
-        canvas.drawCircle(getWidth() / 2, getHeight() / 2, radius + 25, mIndicatorPaint);
+        canvas.drawCircle(getWidth() / 2, getHeight() / 2 + mDeviation, radius + 25, mIndicatorPaint);
 
         mIndicatorPaint.setColor(Color.parseColor(COLOR_PRIMARY));
         mIndicatorPaint.setStyle(Paint.Style.STROKE);
         mIndicatorPaint.setStrokeWidth(STROKE_WIDTH_DEFAULT);
-        canvas.drawCircle(getWidth() / 2, getHeight() / 2, radius, mIndicatorPaint);
+        canvas.drawCircle(getWidth() / 2, getHeight() / 2 + mDeviation, radius, mIndicatorPaint);
         canvas.restore();
     }
 
@@ -167,14 +184,14 @@ public class DashboardView extends View {
         canvas.save();
         mIndicatorPaint.setStyle(Paint.Style.FILL);
         mIndicatorPaint.setColor(Color.RED);
-        LinearGradient mGradient = new LinearGradient(startX, startY, getWidth() / 2, getHeight() / 2, new int[] {Color.parseColor("#00000000"), Color.parseColor("#FF0000")}, null,Shader.TileMode.MIRROR);
+        LinearGradient mGradient = new LinearGradient(startX, startY, getWidth() / 2, getHeight() / 2 + mDeviation, new int[] {Color.parseColor("#00000000"), Color.parseColor("#FF0000")}, null,Shader.TileMode.MIRROR);
         mIndicatorPaint.setShader(mGradient);
-        canvas.rotate(- perDegree * 6 + mCurValue * perDegree, getWidth() / 2, getHeight() / 2);
+        canvas.rotate(- perDegree * 6 + mCurValue * perDegree, getWidth() / 2, getHeight() / 2 + mDeviation);
         Path path = new Path();
         path.moveTo(startX, startY);
-        path.lineTo(getWidth() / 2 + 30 + 35 + 40, getHeight() / 2 + 25);
-        path.lineTo(getWidth() / 2 + 30 + 35 + 80, getHeight() / 2);
-        path.lineTo(getWidth() / 2 + 30 + 35 + 40, getHeight() / 2 - 25);
+        path.lineTo(getWidth() / 2 + 30 + 35 + 40, getHeight() / 2 + 25 + mDeviation);
+        path.lineTo(getWidth() / 2 + 30 + 35 + 80, getHeight() / 2 + mDeviation);
+        path.lineTo(getWidth() / 2 + 30 + 35 + 40, getHeight() / 2 - 25 + mDeviation);
         path.close();
         canvas.drawPath(path, mIndicatorPaint);
         canvas.restore();
@@ -197,7 +214,7 @@ public class DashboardView extends View {
         mLCDPaint.getTextBounds(tvKmPerHour, 0, tvKmPerHour.length(), tvKmPerHourRect);
         int len = 20;
         float startX = getWidth() / 2 - (speedTvRect.width() + tvKmPerHourRect.width() + len)  / 2;
-        float startY = getHeight() / 2 +  getWidth() / 4;
+        float startY = getHeight() / 2 +  getWidth() / 4 + mDeviation;
 
         mLCDPaint.setTextSize(120);
         canvas.drawText(speedText, startX, startY, mLCDPaint);
