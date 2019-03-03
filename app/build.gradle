@@ -10,6 +10,10 @@ android {
         versionCode 10
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86","x86_64"
+        }
     }
 
     //APK 签名的那些事：https://www.jianshu.com/p/a1f8e5896aa2
@@ -135,10 +139,20 @@ dependencies {
     // 上拉下拉：https://github.com/bingoogolapple/BGARefreshLayout-Android
     // 轮播图：https://github.com/bingoogolapple/BGABanner-Android
     // 二维码：https://github.com/bingoogolapple/BGAQRCode-Android
+
+    //3D地图so及jar
+    implementation 'com.amap.api:3dmap:6.7.0'
+    //定位功能
+    implementation 'com.amap.api:location:4.5.0'
+    //搜索功能
+    implementation 'com.amap.api:search:6.5.0.1'
 }
 
 repositories {
     flatDir {
         dirs 'libs' //就是你放aar的目录地址
+    }
+    repositories {
+        jcenter() // 或者 mavenCentral()
     }
 }
