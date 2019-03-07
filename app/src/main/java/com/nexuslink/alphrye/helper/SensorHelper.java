@@ -1,4 +1,4 @@
-package com.nexuslink.alphrye.sensor;
+package com.nexuslink.alphrye.helper;
 
 import android.content.Context;
 import android.hardware.Sensor;

@@ -8,7 +8,7 @@ import android.util.Log;
 import com.nexuslink.alphrye.helper.ActivityStackManager;
 import com.hjq.toast.ToastUtils;
 import com.hjq.umeng.UmengHelper;
-import com.nexuslink.alphrye.sensor.SensorHelper;
+import com.nexuslink.alphrye.helper.SensorHelper;
 
 /**
  *    author : Android 轮子哥
