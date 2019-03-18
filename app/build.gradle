@@ -140,10 +140,10 @@ dependencies {
     // 轮播图：https://github.com/bingoogolapple/BGABanner-Android
     // 二维码：https://github.com/bingoogolapple/BGAQRCode-Android
 
-    //3D地图so及jar
-    implementation 'com.amap.api:3dmap:6.7.0'
     //定位功能
     implementation 'com.amap.api:location:4.5.0'
+    //3d地图以及导航功能
+    implementation 'com.amap.api:navi-3dmap:5.0.0'
     //搜索功能
     implementation 'com.amap.api:search:6.5.0.1'
 }
