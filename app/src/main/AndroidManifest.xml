@@ -48,12 +48,12 @@
             android:theme="@style/LauncherTheme">
 
             <!-- 程序入口 -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW" />
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+                <!--<action android:name="android.intent.action.VIEW" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
 
         </activity>
 
@@ -61,7 +61,9 @@
         <activity
             android:name="com.nexuslink.alphrye.ui.activity.HomeActivity"
             android:alwaysRetainTaskState="true"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop" >
+
+        </activity>
 
         <!-- 登录界面 -->
         <activity
@@ -101,7 +103,20 @@
 
         <!--骑行页面-->
         <activity android:name="com.nexuslink.alphrye.ui.activity.CycleActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape">
+        </activity>
+
+        <!--Splash页面-->
+        <activity android:name="com.nexuslink.alphrye.ui.activity.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name="com.amap.api.location.APSService"/>
 
         <meta-data
             android:name="com.amap.api.v2.apikey"

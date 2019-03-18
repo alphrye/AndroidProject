@@ -5,80 +5,144 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context="com.nexuslink.alphrye.ui.activity.LoginActivity">
 
-    <com.hjq.bar.TitleBar
-        android:id="@+id/tb_login_title"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/space_100"
-        app:backButton="false"
-        app:barStyle="transparent"
-        app:rightColor="@color/colorAccent"
-        app:rightTitle="@string/login_register"
-        app:title="" />
-
-    <ImageView
-        android:layout_width="@dimen/space_200"
-        android:layout_height="@dimen/space_200"
-        android:layout_margin="@dimen/space_60"
-        android:src="@mipmap/ic_logo" />
-
-    <com.hjq.widget.ClearEditText
-        android:id="@+id/et_login_phone"
-        style="@style/EditTextStyle"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/space_80"
-        android:layout_marginTop="@dimen/space_20"
-        android:layout_marginRight="@dimen/space_80"
-        android:hint="@string/login_phone_input_hint"
-        android:inputType="phone"
-        android:maxLength="11"
-        android:maxLines="1" />
+        android:background="@color/color_main">
 
-    <View
-        style="@style/HorizontalLineStyle"
-        android:layout_marginLeft="@dimen/space_80"
-        android:layout_marginRight="@dimen/space_80" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/space_16"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
 
-    <com.hjq.widget.ClearEditText
-        android:id="@+id/et_login_password"
-        style="@style/EditTextStyle"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/space_64"
+                android:text="骑车帮"/>
+
+            <ImageView
+                android:id="@+id/iv_logo"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@drawable/ic_logo_white"
+                android:layout_marginRight="4dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="@dimen/space_64"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_margin="@dimen/space_64"
+                android:text="登录账号，同步云端骑行数据"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/space_80"
-        android:layout_marginTop="@dimen/space_40"
-        android:layout_marginRight="@dimen/space_80"
-        android:hint="@string/login_password_input_hint"
-        android:inputType="textPassword"
-        android:maxLength="20"
-        android:maxLines="1" />
+        android:gravity="center_horizontal">
 
-    <View
-        style="@style/HorizontalLineStyle"
-        android:layout_marginLeft="@dimen/space_80"
-        android:layout_marginRight="@dimen/space_80" />
+        <com.hjq.bar.TitleBar
+            android:visibility="gone"
+            android:id="@+id/tb_login_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/space_100"
+            app:backButton="false"
+            app:barStyle="transparent"
+            app:rightColor="@color/colorAccent"
+            app:rightTitle="@string/login_register"
+            app:title="" />
 
-    <TextView
-        android:id="@+id/tv_login_forget"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginLeft="@dimen/space_80"
-        android:layout_marginTop="@dimen/space_30"
-        android:layout_marginRight="@dimen/space_120"
-        android:text="@string/login_forget"
-        android:textColor="@color/colorAccent" />
+        <TextView
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_40"
+            android:text="@string/login_text"
+            android:textColor="@color/black60"
+            android:textSize="@dimen/font_size_46px" />
 
-    <Button
-        android:id="@+id/btn_login_commit"
-        style="@style/ButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/space_80"
-        android:layout_marginTop="@dimen/space_60"
-        android:layout_marginRight="@dimen/space_80"
-        android:text="@string/login_text" />
+        <com.hjq.widget.ClearEditText
+            android:id="@+id/et_login_phone"
+            style="@style/EditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/space_80"
+            android:layout_marginTop="@dimen/space_40"
+            android:layout_marginRight="@dimen/space_80"
+            android:hint="@string/login_phone_input_hint"
+            android:inputType="phone"
+            android:maxLength="11"
+            android:maxLines="1" />
+
+        <View
+            style="@style/HorizontalLineStyle"
+            android:layout_marginLeft="@dimen/space_80"
+            android:layout_marginRight="@dimen/space_80" />
+
+        <com.hjq.widget.ClearEditText
+            android:id="@+id/et_login_password"
+            style="@style/EditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/space_80"
+            android:layout_marginTop="@dimen/space_40"
+            android:layout_marginRight="@dimen/space_80"
+            android:hint="@string/login_password_input_hint"
+            android:inputType="textPassword"
+            android:maxLength="20"
+            android:maxLines="1" />
+
+        <View
+            style="@style/HorizontalLineStyle"
+            android:layout_marginLeft="@dimen/space_80"
+            android:layout_marginRight="@dimen/space_80" />
+
+        <TextView
+            android:id="@+id/tv_login_forget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginLeft="@dimen/space_80"
+            android:layout_marginTop="@dimen/space_30"
+            android:layout_marginRight="@dimen/space_120"
+            android:text="@string/login_forget"
+            android:textColor="@color/colorAccent" />
+
+        <Button
+            android:id="@+id/btn_login_commit"
+            style="@style/ButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/space_80"
+            android:layout_marginTop="@dimen/space_40"
+            android:layout_marginRight="@dimen/space_80"
+            android:text="@string/login_text" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_40"
+            android:layout_marginLeft="@dimen/space_80"
+            android:layout_marginRight="@dimen/space_80"
+            android:textColor="@color/colorAccent"
+            android:layout_gravity="left"
+            android:text="还没有账号？"/>
+    </LinearLayout>
 </LinearLayout>

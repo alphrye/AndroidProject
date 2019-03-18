@@ -10,11 +10,11 @@
         android:id="@+id/tb_profile_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/color_28272A"
+        android:background="@color/color_24252B"
         app:backButton="false"
         app:title="@string/home_nav_profile"
         app:titleColor="@color/white"
-        app:lineColor="@color/color_28272A"/>
+        app:lineColor="@color/color_24252B"/>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/color_28272A"
+                android:background="@color/color_24252B"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp">
 
@@ -50,7 +50,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:text="- -"
-                            android:textColor="@color/color_289D50"
+                            android:textColor="@color/color_1DA1F2"
                             android:textSize="32sp"
                             android:maxLines="1"
                             android:ellipsize="end"
@@ -96,7 +96,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:text="- -"
-                            android:textColor="@color/color_289D50"
+                            android:textColor="@color/color_1DA1F2"
                             android:textSize="32sp"
                             android:maxLines="1"
                             android:ellipsize="end"

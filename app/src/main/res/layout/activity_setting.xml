@@ -9,6 +9,8 @@
         android:id="@+id/tb_setting_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/color_main"
+        app:titleColor="@color/white"
         app:title="设置"/>
 
     <android.support.v4.widget.NestedScrollView

@@ -3,25 +3,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:background="#252831"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.hjq.bar.TitleBar
         android:id="@+id/tb_cycle_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:backButton="false"
-        app:title="@string/home_nav_cycle" />
-    
-    <Button
-        android:id="@+id/btn_switch_flash_light"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="开"/>
+        android:background="@color/color_main"
+        app:titleColor="@color/white"
+        app:title="@string/home_nav_cycle"
+        android:visibility="gone"/>
 
     <com.nexuslink.alphrye.ui.weight.DashboardView
-        android:id="@+id/v_dash_board"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <com.amap.api.maps.MapView
+        android:visibility="gone"
+        android:id="@+id/v_map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="2">
+    </com.amap.api.maps.MapView>
+
+    <com.amap.api.navi.AMapNaviView
+        android:id="@+id/v_map_navi"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        />
 
 </LinearLayout>

@@ -29,7 +29,5 @@ public final class HomeFragmentAdapter extends BaseFragmentAdapter<MyLazyFragmen
         list.add(ExploreFragment.newInstance());
         list.add(CycleFragment.newInstance());
         list.add(ProfileFragment.newInstance());
-        //测试
-        list.add(TestFragmentD.newInstance());
     }
 }

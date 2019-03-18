@@ -3,6 +3,7 @@ package com.nexuslink.alphrye.ui.activity;
 import android.location.Location;
 import android.os.Bundle;
 
+import com.amap.api.maps.MapView;
 import com.nexuslink.alphrye.common.MyActivity;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.helper.LocationHelper;
@@ -13,6 +14,8 @@ public class CycleActivity extends MyActivity implements LocationHelper.ILocatio
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MapView mapView = findViewById(R.id.v_map);
+        mapView.onCreate(savedInstanceState);
     }
 
     @Override

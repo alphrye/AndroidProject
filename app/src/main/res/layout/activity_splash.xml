@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_main">
+
+    <TextView
+        android:id="@+id/tv_slogean"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/space_32"
+        android:textSize="12sp"
+        android:text="身体和灵魂总有一个要在路上"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/space_16"
+        android:layout_above="@+id/tv_slogean">
+
+        <ImageView
+            android:id="@+id/iv_logo"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_logo_white"
+            android:layout_marginRight="4dp"
+            android:layout_marginLeft="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:textStyle="bold"
+            android:layout_gravity="bottom"
+            android:text="骑车帮"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_month"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="160sp"
+            android:gravity="center"
+            android:text="03"/>
+
+        <TextView
+            android:id="@+id/tv_day"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_1DA1F2"
+            android:textSize="160sp"
+            android:gravity="center"
+            android:text="20"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

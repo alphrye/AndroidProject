@@ -84,7 +84,7 @@ public class DashboardView extends View {
         perDegree = (int) ((360.0 - mA) / (mNumScaleTotal - 1));
         mValueLongPer = 8;
         initPaints();
-        setBackgroundColor(Color.BLACK);
+        setBackgroundColor(Color.parseColor("#24252B"));
     }
 
     /**
@@ -189,7 +189,7 @@ public class DashboardView extends View {
 
         mIndicatorPaint.setShader(null);
 
-        mIndicatorPaint.setColor(Color.BLACK);
+        mIndicatorPaint.setColor(Color.parseColor("#24252B"));
         mIndicatorPaint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(getWidth() / 2, getHeight() / 2 + mDeviation, radius + 25, mIndicatorPaint);
 
@@ -210,7 +210,7 @@ public class DashboardView extends View {
     private void drawSpeedIndicator(Canvas canvas, int startX, int startY, float radius) {
         canvas.save();
         mIndicatorPaint.setStyle(Paint.Style.FILL);
-        mIndicatorPaint.setColor(Color.RED);
+        mIndicatorPaint.setColor(Color.parseColor("#1DA1F2"));
         LinearGradient mGradient = new LinearGradient(startX, startY, getWidth() / 2, getHeight() / 2 + mDeviation, new int[] {Color.parseColor("#00000000"), Color.parseColor("#FF0000")}, null,Shader.TileMode.MIRROR);
         mIndicatorPaint.setShader(mGradient);
         canvas.rotate(- perDegree * 6 + mCurValue * perDegree, getWidth() / 2, getHeight() / 2 + mDeviation);

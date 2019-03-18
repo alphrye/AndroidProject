@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:backButton="false"
+        android:background="@color/color_main"
+        app:titleColor="@color/white"
         app:title="@string/home_nav_explore" />
 
 </LinearLayout>

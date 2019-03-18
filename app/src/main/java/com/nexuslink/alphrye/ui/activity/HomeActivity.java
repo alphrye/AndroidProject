@@ -76,10 +76,6 @@ public class HomeActivity extends MyActivity implements
             case 2:
                 mBottomNavigationView.setSelectedItemId(R.id.home_profile);
                 break;
-            //用于测试
-            case 3:
-                mBottomNavigationView.setSelectedItemId(R.id.menu_home);
-                break;
         }
     }
 
@@ -101,10 +97,6 @@ public class HomeActivity extends MyActivity implements
                 return true;
             case R.id.home_profile:
                 mViewPager.setCurrentItem(2);
-                return true;
-            //用于测试
-            case R.id.menu_home:
-                mViewPager.setCurrentItem(3);
                 return true;
         }
         return false;

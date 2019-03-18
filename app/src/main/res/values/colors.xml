@@ -3,7 +3,7 @@
     <color name="windowBackground">#F4F4F4</color>
     <color name="colorPrimary">#FFFFFF</color>
     <color name="colorPrimaryDark">#000000</color>
-    <color name="colorAccent">#5A8DDF</color>
+    <color name="colorAccent">#1DA1F2</color>
 
     <!-- 按钮按压时的颜色 -->
     <color name="colorButtonPressed">#1976d2</color>
@@ -12,8 +12,10 @@
     <!-- 分割线的颜色 -->
     <color name="colorLine">#ECECEC</color>
 
-    <color name="color_28272A">#28272A</color>
-    <color name="color_289D50">#289D50</color>
+    <color name="color_24252B">#24252B</color>
+    <color name="color_1DA1F2">#1DA1F2</color>
     <color name="color_999999">#999999</color>
     <color name="color_333333">#333333</color>
+
+    <color name="color_main">#24252B</color>
 </resources>

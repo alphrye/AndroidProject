@@ -8,6 +8,8 @@
         android:id="@+id/tb_my_explore_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/color_main"
+        app:titleColor="@color/white"
         app:title="我的动态"/>
 
 </LinearLayout>

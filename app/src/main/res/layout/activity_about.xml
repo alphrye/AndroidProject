@@ -12,6 +12,8 @@
         android:id="@+id/tb_about_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/color_main"
+        app:titleColor="@color/white"
         app:title="@string/about_text" />
 
     <ImageView
