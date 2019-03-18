@@ -23,8 +23,9 @@ public class DashboardView extends View {
     private static final String COLOR_PRIMARY = "#FFFFFF";
     private static final int STROKE_WIDTH_DEFAULT = 10;
     private static final int LEN_BETWEEN_CIRCLE_AND_INDICATOR = 35;
-    private static final int WIDTH_DEFALUT = 1080;
-    private static final int HEIGHT_DEFALUT = 1080;
+    private static final int WIDTH_DEFAULT = 800;
+    private static final int HEIGHT_DEFAULT = 1000;
+    /**圆心向下偏移量*/
     private int mDeviation;
 
     /**绘制刻度的画笔*/
@@ -42,6 +43,25 @@ public class DashboardView extends View {
 
     private float mCurValue;
 
+    /**长刻度长度*/
+    private int mScaleLongLen;
+
+    /**短刻度长度*/
+    private int mScaleShortLen;
+
+    private int mLenToScaleStart;
+
+    /**底部空余角度*/
+    private int mA;
+
+    private int numScaleLong;
+
+    private int numScaleShortPer;
+
+    private int mNumScaleTotal;
+
+    private int mValueLongPer;
+
     public DashboardView(Context context) {
         this(context, null);
     }
@@ -52,9 +72,17 @@ public class DashboardView extends View {
 
     public DashboardView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        perDegree = 180 / 36;
         mCenterCircleRadius = 35;
         mCurValue = 0.0f;
+        mScaleLongLen = 45;
+        mScaleShortLen = 30;
+        mLenToScaleStart = 30;
+        mA = 120;
+        numScaleLong = 9;
+        numScaleShortPer = 5;
+        mNumScaleTotal = (numScaleLong - 1) * numScaleShortPer + numScaleLong;
+        perDegree = (int) ((360.0 - mA) / (mNumScaleTotal - 1));
+        mValueLongPer = 8;
         initPaints();
         setBackgroundColor(Color.BLACK);
     }
@@ -86,13 +114,14 @@ public class DashboardView extends View {
 
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        // TODO: 2019/3/7 控制视图是一个正方形
         if (widthMode == MeasureSpec.AT_MOST && heightMode == MeasureSpec.AT_MOST) {
             int minLen = Math.min(widthSize, heightSize);
             setMeasuredDimension(minLen, minLen);
         } else if (widthMode == MeasureSpec.AT_MOST) {
-            setMeasuredDimension(WIDTH_DEFALUT, heightSize);
+            setMeasuredDimension(WIDTH_DEFAULT, heightSize);
         } else if (heightMode == MeasureSpec.AT_MOST){
-            setMeasuredDimension(widthSize, HEIGHT_DEFALUT);
+            setMeasuredDimension(widthSize, HEIGHT_DEFAULT);
         }
     }
 
@@ -100,7 +129,8 @@ public class DashboardView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        mDeviation = getWidth() / 8;
+        mDeviation = (int) ((getHeight() / 2 * Math.cos((mA / 2.0) * Math.PI / 180.0)) / 2);
+        //(startX, startY)为左边刻度的起始绘制坐标
         int startX = 0;
         int startY = getHeight() / 2 + mDeviation;
 
@@ -121,26 +151,23 @@ public class DashboardView extends View {
      */
     private void drawScaleAndNum(Canvas canvas, int startX, int startY) {
         canvas.save();
-        int longLen = 45;
-        int shortLen = 30;
-        int longEndX = startX + longLen;
+        int longEndX = startX + mScaleLongLen;
         int longEndY = getHeight() / 2 + mDeviation;
-        int shortEndX = startX + shortLen;
+        int shortEndX = startX + mScaleShortLen;
         int shortEndY = getHeight() / 2 + mDeviation;
-        int len = 30;
-        canvas.rotate(-perDegree * 6, getWidth() / 2, getHeight() / 2 + mDeviation);
-        for (int i = 0; i < 49; i++) {
-            if (i % 6 == 0) {
+        canvas.rotate(-(90 - mA / 2), getWidth() / 2, getHeight() / 2 + mDeviation);
+        for (int i = 0; i < mNumScaleTotal; i++) {
+            if (i % (numScaleShortPer + 1)== 0) {
                 mScalePaint.setColor(Color.RED);
                 mScalePaint.setStrokeWidth(STROKE_WIDTH_DEFAULT);
                 canvas.drawLine(startX, startY, longEndX, longEndY, mScalePaint);
                 canvas.save();
-                String text = i / 2 + "";
+                String text = i / (numScaleShortPer + 1) * mValueLongPer + "";
                 Rect rect =  new Rect();
                 mLCDPaint.setTextSize(70);
                 mLCDPaint.getTextBounds(text, 0, text.length(), rect);
-                canvas.rotate(- perDegree * (i - 6), longEndX + len + rect.width() / 2,  longEndY);
-                canvas.drawText(text, longEndX + len,  longEndY + rect.height() / 2, mLCDPaint);
+                canvas.rotate(- perDegree * (i - 6), longEndX + mLenToScaleStart + rect.width() / 2,  longEndY);
+                canvas.drawText(text, longEndX + mLenToScaleStart,  longEndY + rect.height() / 2, mLCDPaint);
                 canvas.restore();
             } else {
                 mScalePaint.setColor(Color.parseColor(COLOR_PRIMARY));
