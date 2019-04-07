@@ -8,6 +8,9 @@ import android.widget.TextView;
 import com.nexuslink.alphrye.common.MyActivity;
 import com.nexuslink.alphrye.cyctastic.R;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
 import butterknife.BindView;
 
 public class SplashActivity extends MyActivity {
@@ -37,12 +40,17 @@ public class SplashActivity extends MyActivity {
             public void run() {
                 Intent intent = new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
+                finish();
             }
         }, 800);
     }
 
     @Override
     protected void initData() {
-
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8:00"));
+        int monthText = calendar.get(Calendar.MONTH);
+        int dayText = calendar.get(Calendar.DATE);
+        mTvMonth.setText(String.valueOf(monthText));
+        mTvDay.setText(String.valueOf(dayText));
     }
 }
