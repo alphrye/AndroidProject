@@ -49,11 +49,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:text="- -"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="3"
                             android:textColor="@color/color_1DA1F2"
                             android:textSize="32sp"
-                            android:maxLines="1"
-                            android:ellipsize="end"
                             tools:text="3" />
 
                         <TextView
@@ -78,9 +78,9 @@
                             android:id="@+id/iv_avatar"
                             android:layout_width="125dp"
                             android:layout_height="125dp"
-                            android:src="@color/gray"
+                            android:src="@drawable/test_avatar"
                             app:civ_border_color="@color/white"
-                            app:civ_border_width="2dp"/>
+                            app:civ_border_width="2dp" />
 
                     </LinearLayout>
 
@@ -95,7 +95,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:text="- -"
+                            android:text="14.3"
                             android:textColor="@color/color_1DA1F2"
                             android:textSize="32sp"
                             android:maxLines="1"
@@ -127,7 +127,7 @@
                     android:textSize="18sp"
                     android:maxLines="1"
                     android:ellipsize="end"
-                    android:text="未登录" />
+                    android:text="Alphrye" />
 
                 <!--等级-->
                 <TextView
@@ -140,7 +140,7 @@
                     android:textSize="14sp"
                     android:maxLines="1"
                     android:ellipsize="end"
-                    android:text="- -"
+                    android:text="初级骑者"
                     tools:text="初级骑者" />
 
             </RelativeLayout>

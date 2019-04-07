@@ -11,16 +11,89 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:backButton="false"
-        android:background="@color/color_main"
+        android:background="#252831"
         app:titleColor="@color/white"
         app:title="@string/home_nav_cycle"
-        android:visibility="gone"/>
+        app:lineColor="#252831"/>
+
+    <LinearLayout
+        android:layout_weight="0.5"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/space_32"
+            android:layout_marginRight="@dimen/space_32">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_flashlight_fill"/>
+
+            <TextView
+                android:text="AUTO"
+                android:layout_marginTop="@dimen/space_8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/space_32"
+            android:layout_marginRight="@dimen/space_32">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/icon_weather"/>
+
+            <TextView
+                android:text="3℃"
+                android:layout_marginTop="@dimen/space_8"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginLeft="@dimen/space_32"
+            android:layout_marginRight="@dimen/space_32">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_safe"/>
+
+            <TextView
+                android:text="ON"
+                android:layout_marginTop="@dimen/space_8"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </LinearLayout>
 
     <com.nexuslink.alphrye.ui.weight.DashboardView
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="2"/>
 
     <com.amap.api.maps.MapView
         android:visibility="gone"
@@ -34,7 +107,7 @@
         android:id="@+id/v_map_navi"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="3"
         />
 
 </LinearLayout>

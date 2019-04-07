@@ -29,6 +29,8 @@ public class LoginActivity extends MyActivity
     Button mCommitView;
     @BindView(R.id.tv_login_forget)
     TextView mLoginForgetView;
+    @BindView(R.id.tv_register)
+    TextView mTvRegister;
 
     private EditTextInputHelper mEditTextInputHelper;
 
@@ -46,6 +48,7 @@ public class LoginActivity extends MyActivity
     protected void initView() {
         mCommitView.setOnClickListener(this);
         mLoginForgetView.setOnClickListener(this);
+        mTvRegister.setOnClickListener(this);
         mEditTextInputHelper = new EditTextInputHelper(mCommitView);
         mEditTextInputHelper.addViews(mPhoneView, mPasswordView);
     }
@@ -92,6 +95,8 @@ public class LoginActivity extends MyActivity
             }
         } else if (v == mLoginForgetView) {
             startActivity(HomeActivity.class);
+        } else if (v == mTvRegister) {
+            startActivity(RegisterActivity.class);
         }
     }
 }

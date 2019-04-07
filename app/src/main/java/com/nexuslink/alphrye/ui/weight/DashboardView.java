@@ -82,9 +82,9 @@ public class DashboardView extends View {
         numScaleShortPer = 5;
         mNumScaleTotal = (numScaleLong - 1) * numScaleShortPer + numScaleLong;
         perDegree = (int) ((360.0 - mA) / (mNumScaleTotal - 1));
-        mValueLongPer = 8;
+        mValueLongPer = 3;
         initPaints();
-        setBackgroundColor(Color.parseColor("#24252B"));
+        setBackgroundColor(Color.parseColor("#252831"));
     }
 
     /**
@@ -189,7 +189,7 @@ public class DashboardView extends View {
 
         mIndicatorPaint.setShader(null);
 
-        mIndicatorPaint.setColor(Color.parseColor("#24252B"));
+        mIndicatorPaint.setColor(Color.parseColor("#252831"));
         mIndicatorPaint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(getWidth() / 2, getHeight() / 2 + mDeviation, radius + 25, mIndicatorPaint);
 
