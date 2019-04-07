@@ -20,6 +20,7 @@
         android:visibility="gone"/>
 
     <ImageView
+        android:id="@+id/v_close"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/icon_delete"
@@ -142,6 +143,7 @@
                 android:text="@string/register_text" />
 
             <TextView
+                android:id="@+id/tv_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/space_26"

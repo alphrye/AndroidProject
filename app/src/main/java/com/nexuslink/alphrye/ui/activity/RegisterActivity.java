@@ -3,6 +3,8 @@ package com.nexuslink.alphrye.ui.activity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.nexuslink.alphrye.common.MyActivity;
 import com.nexuslink.alphrye.cyctastic.R;
@@ -36,6 +38,12 @@ public class RegisterActivity extends MyActivity
     @BindView(R.id.btn_register_commit)
     Button mCommitView;
 
+    @BindView(R.id.tv_back)
+    TextView mTvBack;
+
+    @BindView(R.id.v_close)
+    ImageView mIvClose;
+
     private EditTextInputHelper mEditTextInputHelper;
 
     @Override
@@ -52,6 +60,8 @@ public class RegisterActivity extends MyActivity
     protected void initView() {
         mCountdownView.setOnClickListener(this);
         mCommitView.setOnClickListener(this);
+        mTvBack.setOnClickListener(this);
+        mIvClose.setOnClickListener(this);
 
         mEditTextInputHelper = new EditTextInputHelper(mCommitView);
         mEditTextInputHelper.addViews(mPhoneView, mCodeView, mPasswordView1, mPasswordView2);
@@ -94,6 +104,8 @@ public class RegisterActivity extends MyActivity
                 toast(getResources().getString(R.string.two_password_input_error));
                 return;
             }
+        } else if (v == mTvBack || v == mIvClose) {
+            finish();
         }
     }
 
