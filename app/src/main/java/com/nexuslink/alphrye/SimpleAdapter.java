@@ -14,7 +14,8 @@ import android.view.ViewGroup;
 
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.item.FeedItem;
-import com.nexuslink.alphrye.model.FeedModel;
+import com.nexuslink.alphrye.item.RideHistoryItem;
+import com.nexuslink.alphrye.ui.activity.RideHistoryActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -130,10 +131,13 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //ViewType =》Model类型 =》new 对应ViewHolder(layoutId SimpleItem)
-        // TODO: 2019/3/31 使用Map优化
+        // TODO: 2019/3/31 使用Map优化, 这里与业务逻辑没有解耦
         if (viewType == CardConstant.TYPE_FEED) {
             View itemView = LayoutInflater.from(mContext).inflate(R.layout.layout_item_feed, null);
             return new FeedItem.ViewHolder(itemView);
+        } else if (viewType == CardConstant.TYPE_RIDE_HISTORY) {
+            View itemView = LayoutInflater.from(mContext).inflate(R.layout.layout_item_ride_history, null);
+            return new RideHistoryItem.ViewHolder(itemView);
         }
         return null;
     }

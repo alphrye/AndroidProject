@@ -1,14 +1,26 @@
 package com.nexuslink.alphrye.ui.activity;
 
+import android.view.View;
+
+import com.nexuslink.alphrye.SimpleAdapter;
+import com.nexuslink.alphrye.SimpleModel;
 import com.nexuslink.alphrye.common.MyActivity;
 import com.nexuslink.alphrye.cyctastic.R;
+import com.nexuslink.alphrye.model.FeedModel;
+import com.nexuslink.alphrye.model.RideHistoryModel;
+import com.nexuslink.alphrye.net.wrapper.RetrofitWrapper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *    author : alphrye
  *    time   : 2018/12/29
  *    desc   : 骑行历史页面
  */
-public class RideHistoryActivity extends MyActivity {
+public class RideHistoryActivity extends MyActivity implements SimpleAdapter.OnItemClickListener {
+    private SimpleAdapter mSimpleAdapter;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_ride_history;
@@ -21,11 +33,45 @@ public class RideHistoryActivity extends MyActivity {
 
     @Override
     protected void initView() {
-
+        //测试数据
+        List<SimpleModel> rideHistoryModels = new ArrayList<>();
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        mSimpleAdapter = new SimpleAdapter.Builder(this)
+                .recyclerView(R.id.v_recycler)
+                .itemClickListener(this)
+                .data(rideHistoryModels)
+                .build();
     }
 
     @Override
     protected void initData() {
+        // TODO: 2019/4/8 SimpleAdapter与Retrofit的请求封装
+        RetrofitWrapper wrapper = RetrofitWrapper.getInstance();
+        wrapper.enqueue(wrapper.getCommonCall().requestMyRideHistory(), new RetrofitWrapper.CommonCallBack<List<RideHistoryModel>>() {
+            @Override
+            public void onSuccess(List<RideHistoryModel> response) {
+                if (response == null || response.isEmpty()) {
+                    return;
+                }
+                mSimpleAdapter.appendData(new ArrayList<SimpleModel>(response));
+            }
+
+            @Override
+            public void onFail(String errorTips) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onItemClick(View v, SimpleModel model, int position) {
 
     }
 }
