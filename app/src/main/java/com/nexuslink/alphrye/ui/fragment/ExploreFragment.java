@@ -4,12 +4,20 @@ import android.view.View;
 
 import com.nexuslink.alphrye.SimpleAdapter;
 import com.nexuslink.alphrye.SimpleModel;
+import com.nexuslink.alphrye.api.CommonApiService;
 import com.nexuslink.alphrye.common.MyLazyFragment;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.model.FeedModel;
+import com.nexuslink.alphrye.net.bean.CommonNetBean;
+import com.nexuslink.alphrye.net.wrapper.RetrofitWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 /**
  *    author : alphrye
@@ -17,6 +25,8 @@ import java.util.List;
  *    desc   : 探索页面
  */
 public class ExploreFragment extends MyLazyFragment implements SimpleAdapter.OnItemClickListener {
+
+    private SimpleAdapter mSimpleAdapter;
 
     public static ExploreFragment newInstance() {
         return new ExploreFragment();
@@ -34,25 +44,8 @@ public class ExploreFragment extends MyLazyFragment implements SimpleAdapter.OnI
 
     @Override
     protected void initView() {
-        List<SimpleModel> models = new ArrayList<>();
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        models.add(new FeedModel());
-        new SimpleAdapter.Builder(getContext())
+        mSimpleAdapter = new SimpleAdapter.Builder(getContext())
                 .recyclerView(R.id.v_recycler)
-                .data(models)
                 .drag(false)
                 .itemClickListener(this)
                 .build();
@@ -60,7 +53,24 @@ public class ExploreFragment extends MyLazyFragment implements SimpleAdapter.OnI
 
     @Override
     protected void initData() {
+        // TODO: 2019/4/7 Map缓存，内存优化
+        RetrofitWrapper wrapper = RetrofitWrapper.getInstance();
+        wrapper.enqueue(wrapper.getCommonCall().requestFeeds(), new RetrofitWrapper.CommonCallBack<List<FeedModel>>() {
+            @Override
+            public void onSuccess(List<FeedModel> response) {
+                if (response == null ||
+                        response.isEmpty()) {
+                    return;
+                }
+                List<SimpleModel> simpleModels = new ArrayList<SimpleModel>(response);
+                mSimpleAdapter.appendData(simpleModels);
+            }
 
+            @Override
+            public void onFail(String errorTips) {
+
+            }
+        });
     }
 
     @Override

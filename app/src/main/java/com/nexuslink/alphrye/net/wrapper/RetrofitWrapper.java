@@ -64,7 +64,7 @@ public class RetrofitWrapper {
                 if (body == null) {
                     return;
                 }
-                if (!"success".equals(body.status)) {
+                if (!"200".equals(body.status)) {
                     String prompts = body.prompts;
                     if (TextUtils.isEmpty(prompts)) {
                         return;

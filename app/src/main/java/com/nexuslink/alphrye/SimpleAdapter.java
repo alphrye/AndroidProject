@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.item.FeedItem;
+import com.nexuslink.alphrye.model.FeedModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -179,6 +180,18 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public int getItemCount() {
         return mModels.size();
+    }
+
+    public void appendData(List<SimpleModel> modelList) {
+        if (modelList == null
+                || modelList.isEmpty()) {
+            return;
+        }
+        if (mModels == null){
+            mModels = new ArrayList<>();
+        }
+        mModels.addAll(modelList);
+        notifyDataSetChanged();
     }
 
 
