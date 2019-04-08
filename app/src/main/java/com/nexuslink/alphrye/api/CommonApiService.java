@@ -20,4 +20,7 @@ public interface CommonApiService {
 
     @GET("/v1/feed/")
     Call<CommonNetBean<List<FeedModel>>> requestFeeds();
+
+    @GET("/v1/my_feed/")
+    Call<CommonNetBean<List<FeedModel>>> requestMyFeeds();
 }
