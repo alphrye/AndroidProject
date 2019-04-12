@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/color_main">
+
+    <!--标题栏-->
+    <com.hjq.bar.TitleBar
+        android:id="@+id/tb_cycle_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:backButton="false"
+        android:background="@color/color_main"
+        app:titleColor="@color/white"
+        app:title="骑行"
+        app:lineColor="@color/color_main"/>
+
+    <!--仪表盘-->
+    <com.nexuslink.alphrye.ui.weight.DashboardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_weight="2"/>
+
+    <!--数据项-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/v_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!--暂停或开始按钮-->
+        <TextView
+            android:id="@+id/btn_start_or_pause"
+            android:text="@string/action_start"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:background="@drawable/bg_shape_start_or_pause"
+            android:layout_marginLeft="72dp"
+            android:layout_marginRight="72dp"/>
+
+        <!--结束按钮-->
+        <TextView
+            android:id="@+id/btn_done"
+            android:text="@string/action_done"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_shape_done"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:layout_toStartOf="@+id/btn_start_or_pause"
+            android:layout_toLeftOf="@+id/btn_start_or_pause"
+            android:visibility="gone"/>
+
+        <!--地图按钮-->
+        <ImageView
+            android:id="@+id/iv_map"
+            android:textColor="@color/white"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:src="@drawable/map_logo"
+            android:layout_toRightOf="@id/btn_start_or_pause"
+            android:layout_centerInParent="true"
+            android:layout_toEndOf="@id/btn_start_or_pause" />
+    </RelativeLayout>
+
+</LinearLayout>

@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,9 @@ import android.view.ViewGroup;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.item.FeedItem;
 import com.nexuslink.alphrye.item.RideHistoryItem;
-import com.nexuslink.alphrye.ui.activity.RideHistoryActivity;
+import com.nexuslink.alphrye.item.RunningDataItem;
+import com.nexuslink.alphrye.item.RunningTimeItem;
+import com.nexuslink.alphrye.item.SearchTipItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -138,17 +141,25 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else if (viewType == CardConstant.TYPE_RIDE_HISTORY) {
             View itemView = LayoutInflater.from(mContext).inflate(R.layout.layout_item_ride_history, null);
             return new RideHistoryItem.ViewHolder(itemView);
+        } else if (viewType == CardConstant.TYPE_SEARCH_TIPS) {
+            View itemView = LayoutInflater.from(mContext).inflate(R.layout.layout_item_search_tips, null);
+            return new SearchTipItem.ViewHolder(itemView);
+        } else if (viewType == CardConstant.TYPE_RUNNING_DATA) {
+            View itemView = LayoutInflater.from(mContext).inflate(R.layout.layout_item_running_data, null);
+            return new RunningDataItem.ViewHolder(itemView);
+        } else if (viewType == CardConstant.TYPE_RUNNING_TIME) {
+            View itemView = LayoutInflater.from(mContext).inflate(R.layout.layout_item_running_time, null);
+            return new RunningTimeItem.ViewHolder(itemView);
         }
         return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads) {
         super.onBindViewHolder(holder, position, payloads);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
+        if (!payloads.isEmpty()) {
+            Log.d("Test", "onBindViewHolder: " + payloads.get(0));
+        }
         if (mModels == null
                 || mModels.isEmpty()
                 || position >= mModels.size()) {
@@ -178,7 +189,12 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 return false;
             }
         });
-        simpleItem.bindViewHolder(holder, position);
+        simpleItem.bindViewHolder(holder, position, payloads);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, int position) {
+
     }
 
     @Override
@@ -195,6 +211,18 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             mModels = new ArrayList<>();
         }
         mModels.addAll(modelList);
+        notifyDataSetChanged();
+    }
+
+    public void setData(List<SimpleModel> modelList) {
+        if (modelList == null
+                || modelList.isEmpty()) {
+            return;
+        }
+        if (mModels == null){
+            mModels = new ArrayList<>();
+        }
+        mModels = modelList;
         notifyDataSetChanged();
     }
 

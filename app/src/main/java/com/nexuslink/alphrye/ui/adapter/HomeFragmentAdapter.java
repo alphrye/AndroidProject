@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.hjq.base.BaseFragmentAdapter;
 import com.nexuslink.alphrye.common.MyLazyFragment;
+import com.nexuslink.alphrye.ui.fragment.NewCycleFragment;
 import com.nexuslink.alphrye.ui.fragment.TestFragmentD;
 import com.nexuslink.alphrye.ui.fragment.CycleFragment;
 import com.nexuslink.alphrye.ui.fragment.ExploreFragment;
@@ -27,7 +28,7 @@ public final class HomeFragmentAdapter extends BaseFragmentAdapter<MyLazyFragmen
     @Override
     protected void init(FragmentManager manager, List<MyLazyFragment> list) {
         list.add(ExploreFragment.newInstance());
-        list.add(CycleFragment.newInstance());
+        list.add(NewCycleFragment.newInstance());
         list.add(ProfileFragment.newInstance());
     }
 }

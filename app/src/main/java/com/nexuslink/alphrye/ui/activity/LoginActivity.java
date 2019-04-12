@@ -9,6 +9,8 @@ import com.nexuslink.alphrye.common.MyActivity;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.helper.EditTextInputHelper;
 import com.hjq.toast.ToastUtils;
+import com.nexuslink.alphrye.model.ProfileModel;
+import com.nexuslink.alphrye.net.wrapper.RetrofitWrapper;
 
 import butterknife.BindView;
 
@@ -96,7 +98,25 @@ public class LoginActivity extends MyActivity
         } else if (v == mLoginForgetView) {
             startActivity(HomeActivity.class);
         } else if (v == mTvRegister) {
-            startActivity(RegisterActivity.class);
+//            startActivity(RegisterActivity.class);
+            //发起登录请求
+            RetrofitWrapper wrapper = RetrofitWrapper.getInstance();
+            wrapper.enqueue(wrapper.getCommonCall().login(), new RetrofitWrapper.CommonCallBack<ProfileModel>() {
+                @Override
+                public void onSuccess(ProfileModel response) {
+                    if (response == null) {
+                        //fail
+                        return;
+                    }
+                    startActivity(HomeActivity.class);
+                    //保存数据到Sp
+                }
+
+                @Override
+                public void onFail(String errorTips) {
+
+                }
+            });
         }
     }
 }

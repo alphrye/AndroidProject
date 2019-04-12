@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#252831"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.hjq.bar.TitleBar
+        android:visibility="gone"
         android:id="@+id/tb_cycle_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,6 +17,7 @@
         app:lineColor="#252831"/>
 
     <LinearLayout
+        android:visibility="gone"
         android:layout_weight="0.5"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -90,24 +91,35 @@
     </LinearLayout>
 
     <com.nexuslink.alphrye.ui.weight.DashboardView
+        android:visibility="gone"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="2"/>
 
     <com.amap.api.maps.MapView
-        android:visibility="gone"
         android:id="@+id/v_map"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_height="match_parent">
     </com.amap.api.maps.MapView>
 
+    <TextView
+        android:id="@+id/v_search"
+        android:text="@string/search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:padding="8dp"
+        android:textSize="18sp"
+        android:background="@color/white"/>
+
     <com.amap.api.navi.AMapNaviView
+        android:visibility="gone"
         android:id="@+id/v_map_navi"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_height="400dp"
         />
 
-</LinearLayout>
+</RelativeLayout>

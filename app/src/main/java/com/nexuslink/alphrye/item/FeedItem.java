@@ -4,12 +4,13 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nexuslink.alphrye.SimpleItem;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.model.FeedModel;
+
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -17,7 +18,7 @@ public class FeedItem extends SimpleItem<FeedModel> {
 
 
     @Override
-    protected void bindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    protected void bindViewHolder(RecyclerView.ViewHolder viewHolder, int position, List<Object> payloads) {
         if (viewHolder instanceof ViewHolder) {
             FeedModel.FeedUserBean user = mModel.user;
             if (user != null) {

@@ -1,10 +1,14 @@
 package com.nexuslink.alphrye.ui.activity;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.MenuItem;
 
+import com.amap.api.services.help.Tip;
 import com.nexuslink.alphrye.common.MyActivity;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.helper.ActivityStackManager;
@@ -21,6 +25,14 @@ import butterknife.BindView;
  */
 public class HomeActivity extends MyActivity implements
         ViewPager.OnPageChangeListener, BottomNavigationView.OnNavigationItemSelectedListener {
+    public static final int REQUEST_SEARCH_TIP = 0;
+
+    public static final int PAGE_HOME_EXPLORE = 0;
+
+    public static final int PAGE_HOME_MAP = 1;
+
+    public static final int PAGE_HOME_PROFILE = 2;
+
 
     @BindView(R.id.vp_home_pager)
     ViewPager mViewPager;
@@ -55,6 +67,7 @@ public class HomeActivity extends MyActivity implements
 
         // 限制页面数量
         mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount());
+        mViewPager.setCurrentItem(PAGE_HOME_MAP);
     }
 
     /**
@@ -67,13 +80,13 @@ public class HomeActivity extends MyActivity implements
     @Override
     public void onPageSelected(int position) {
         switch (position) {
-            case 0:
+            case PAGE_HOME_EXPLORE:
                 mBottomNavigationView.setSelectedItemId(R.id.home_explore);
                 break;
-            case 1:
+            case PAGE_HOME_MAP:
                 mBottomNavigationView.setSelectedItemId(R.id.home_cycle);
                 break;
-            case 2:
+            case PAGE_HOME_PROFILE:
                 mBottomNavigationView.setSelectedItemId(R.id.home_profile);
                 break;
         }

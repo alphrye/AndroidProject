@@ -38,4 +38,14 @@
     <string name="about_text">关于我们</string>
     <string name="about_copyright">Copyright © 2018</string>
 
+    <string name="search">搜索</string>
+    <string name="search_destination">搜索目的地</string>
+
+    <!--骑行相关操作-->
+    <string name="action_start">开始</string>
+    <string name="action_pause">暂停</string>
+    <string name="action_done">完成</string>
+
+
+
 </resources>

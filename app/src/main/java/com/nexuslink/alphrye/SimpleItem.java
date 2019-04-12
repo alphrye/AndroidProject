@@ -3,6 +3,8 @@ package com.nexuslink.alphrye;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import java.util.List;
+
 /**
  *
  * @author Yuanrui
@@ -14,7 +16,7 @@ public abstract class SimpleItem<T extends SimpleModel> implements View.OnClickL
 
     protected SimpleAdapter.OnItemClickListener mOnItemClickListener;
 
-    protected void bindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    protected void bindViewHolder(RecyclerView.ViewHolder viewHolder, int position, List<Object> payloads) {
         this.mPos = position;
     }
 
