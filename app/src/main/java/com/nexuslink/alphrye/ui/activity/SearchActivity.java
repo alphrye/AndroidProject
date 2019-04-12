@@ -1,6 +1,7 @@
 package com.nexuslink.alphrye.ui.activity;
 
 import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -25,6 +26,9 @@ public class SearchActivity extends MyActivity implements Inputtips.InputtipsLis
     @BindView(R.id.et_search)
     EditText mEtSearch;
 
+    @BindView(R.id.v_recycler)
+    RecyclerView mRecyclerView;
+
     private SimpleAdapter mSimpleAdapter;
 
     @Override
@@ -40,7 +44,7 @@ public class SearchActivity extends MyActivity implements Inputtips.InputtipsLis
     @Override
     protected void initView() {
         mSimpleAdapter = new SimpleAdapter.Builder(this)
-                .recyclerView(R.id.v_recycler)
+                .recyclerView(mRecyclerView)
                 .itemClickListener(this)
                 .build();
         mEtSearch.addTextChangedListener(new TextWatcher() {

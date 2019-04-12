@@ -1,5 +1,6 @@
 package com.nexuslink.alphrye.ui.fragment;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.nexuslink.alphrye.SimpleAdapter;
@@ -14,6 +15,7 @@ import com.nexuslink.alphrye.net.wrapper.RetrofitWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,6 +29,9 @@ import retrofit2.Retrofit;
 public class ExploreFragment extends MyLazyFragment implements SimpleAdapter.OnItemClickListener {
 
     private SimpleAdapter mSimpleAdapter;
+
+    @BindView(R.id.v_recycler)
+    RecyclerView mRecyclerView;
 
     public static ExploreFragment newInstance() {
         return new ExploreFragment();
@@ -45,7 +50,7 @@ public class ExploreFragment extends MyLazyFragment implements SimpleAdapter.OnI
     @Override
     protected void initView() {
         mSimpleAdapter = new SimpleAdapter.Builder(getContext())
-                .recyclerView(R.id.v_recycler)
+                .recyclerView(mRecyclerView)
                 .drag(false)
                 .itemClickListener(this)
                 .build();

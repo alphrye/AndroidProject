@@ -239,13 +239,6 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             this.mContext = context;
         }
 
-        public Builder recyclerView (int recyclerViewId) {
-            if (mContext instanceof Activity) {
-                this.mRecyclerView = ((Activity) mContext).findViewById(recyclerViewId);
-            }
-            return this;
-        }
-
         public Builder recyclerView (RecyclerView recyclerView) {
             this.mRecyclerView = recyclerView;
             return this;

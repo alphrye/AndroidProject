@@ -1,6 +1,7 @@
 package com.nexuslink.alphrye.ui.fragment;
 
 import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
@@ -112,6 +113,9 @@ public class NewCycleFragment extends MyLazyFragment {
     @BindView(R.id.btn_start_or_pause)
     TextView mBtnStartOrPause;
 
+    @BindView(R.id.v_recycler)
+    RecyclerView mRecyclerView;
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_new_cycle;
@@ -140,7 +144,7 @@ public class NewCycleFragment extends MyLazyFragment {
 
 
         mSimpleAdapter = new SimpleAdapter.Builder(getContext())
-                .recyclerView(R.id.v_recycler)
+                .recyclerView(mRecyclerView)
                 .layoutManager(new StaggeredGridLayoutManager(mDataRaw, StaggeredGridLayoutManager.VERTICAL))
                 .data(modelList)
                 .build();

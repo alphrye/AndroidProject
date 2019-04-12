@@ -1,5 +1,6 @@
 package com.nexuslink.alphrye.ui.activity;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.nexuslink.alphrye.SimpleAdapter;
@@ -13,6 +14,8 @@ import com.nexuslink.alphrye.net.wrapper.RetrofitWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+
 /**
  *    author : alphrye
  *    time   : 2018/12/29
@@ -20,6 +23,9 @@ import java.util.List;
  */
 public class RideHistoryActivity extends MyActivity implements SimpleAdapter.OnItemClickListener {
     private SimpleAdapter mSimpleAdapter;
+
+    @BindView(R.id.v_recycler)
+    RecyclerView mRecyclerView;
 
     @Override
     protected int getLayoutId() {
@@ -44,7 +50,7 @@ public class RideHistoryActivity extends MyActivity implements SimpleAdapter.OnI
         rideHistoryModels.add(new RideHistoryModel());
         rideHistoryModels.add(new RideHistoryModel());
         mSimpleAdapter = new SimpleAdapter.Builder(this)
-                .recyclerView(R.id.v_recycler)
+                .recyclerView(mRecyclerView)
                 .itemClickListener(this)
                 .data(rideHistoryModels)
                 .build();
