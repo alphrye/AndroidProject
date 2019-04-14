@@ -1,6 +1,5 @@
 package com.nexuslink.alphrye;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.item.FeedItem;
+import com.nexuslink.alphrye.item.FeedPicItem;
 import com.nexuslink.alphrye.item.RideHistoryItem;
 import com.nexuslink.alphrye.item.RunningDataItem;
 import com.nexuslink.alphrye.item.RunningTimeItem;
@@ -32,6 +32,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView mRecyclerView;
     private OnItemClickListener mOnItemClickListener;
+    private RecyclerView.ItemDecoration mItemDecoraion;
     private boolean mCanDrag;
     private ItemTouchHelper mItemTouchHelper;
 
@@ -40,7 +41,8 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private SimpleAdapter(Context mContext, RecyclerView recyclerView, List<SimpleModel> models,
                           RecyclerView.LayoutManager layoutManager,
                           OnItemClickListener itemClickListener,
-                          boolean drag) {
+                          boolean drag,
+                          RecyclerView.ItemDecoration itemDecoration) {
         this.mContext = mContext;
         if (models == null) {
             models = new ArrayList<>();
@@ -60,6 +62,10 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return;
         }
         mRecyclerView.setAdapter(this);
+        if (itemDecoration != null) {
+            mItemDecoraion = itemDecoration;
+            mRecyclerView.addItemDecoration(mItemDecoraion);
+        }
         mRecyclerView.setLayoutManager(mLayoutManager);
         if (mCanDrag) {
             ItemTouchHelper.Callback callback = new ItemTouchHelper.Callback() {
@@ -150,6 +156,9 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else if (viewType == CardConstant.TYPE_RUNNING_TIME) {
             View itemView = LayoutInflater.from(mContext).inflate(R.layout.layout_item_running_time, null);
             return new RunningTimeItem.ViewHolder(itemView);
+        } else if (viewType == CardConstant.TYPE_FEED_PIC) {
+            View itemView = LayoutInflater.from(mContext).inflate(R.layout.layout_item_feed_pic, null);
+            return new FeedPicItem.ViewHolder(itemView);
         }
         return null;
     }
@@ -233,6 +242,7 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         private RecyclerView.LayoutManager mLayoutManager;
         private List<SimpleModel> mModels;
         private OnItemClickListener mOnItemClickListener;
+        private RecyclerView.ItemDecoration mItemDecoration;
         private boolean mCanDrag;
 
         public Builder(Context context) {
@@ -271,8 +281,13 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return this;
         }
 
+        public Builder itemDecoration(RecyclerView.ItemDecoration decoration) {
+            this.mItemDecoration = decoration;
+            return this;
+        }
+
         public SimpleAdapter build () {
-            return new SimpleAdapter(mContext, mRecyclerView, mModels, mLayoutManager, mOnItemClickListener, mCanDrag);
+            return new SimpleAdapter(mContext, mRecyclerView, mModels, mLayoutManager, mOnItemClickListener, mCanDrag, mItemDecoration);
         }
     }
 

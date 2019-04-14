@@ -26,4 +26,10 @@ public interface CardConstant {
      * 运行特殊数据项(倒计时)
      */
     int TYPE_RUNNING_TIME = 4;
+
+    /**
+     * Feed中的内部图片卡片
+     */
+    int TYPE_FEED_PIC = 5;
+
 }

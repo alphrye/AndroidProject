@@ -5,6 +5,8 @@ import com.nexuslink.alphrye.SimpleItem;
 import com.nexuslink.alphrye.SimpleModel;
 import com.nexuslink.alphrye.item.FeedItem;
 
+import java.util.List;
+
 public class FeedModel extends SimpleModel {
 
     public FeedUserBean user;
@@ -30,5 +32,18 @@ public class FeedModel extends SimpleModel {
     public static class FeedContentBean {
 
         public String text;
+        public List<String> pic_urls;
+
+        public boolean hasPic () {
+            return pic_urls != null && !pic_urls.isEmpty();
+        }
+
+        public int getPicCount() {
+            if (!hasPic()) {
+               return 0;
+            } else {
+                return pic_urls.size();
+            }
+        }
     }
 }

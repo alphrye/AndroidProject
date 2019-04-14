@@ -63,13 +63,13 @@ android {
     flavorDimensions "default"//这个名字貌似随便取，也可以有多个，总之一定要有
     //多渠道打包
     productFlavors {
-        kuan {}     //酷安
-        tencent {}  //应用宝
-        baidu {}    //百度
-        xiaomi {}   //小米
-        huawei {}   //华为
-        google {}   //谷歌
-
+//        kuan {}     //酷安
+//        tencent {}  //应用宝
+//        baidu {}    //百度
+//        xiaomi {}   //小米
+//        huawei {}   //华为
+//        google {}   //谷歌
+//
         productFlavors.all { flavor ->
             flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
         }
@@ -147,6 +147,9 @@ dependencies {
     implementation 'com.amap.api:navi-3dmap:5.1.0'
     //搜索功能
     implementation 'com.amap.api:search:6.5.0.1'
+
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 }
 
 repositories {
