@@ -1,11 +1,13 @@
 package com.nexuslink.alphrye.item;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -69,6 +71,12 @@ public class FeedItem extends SimpleItem<FeedModel> {
                 } else {
                     recyclerView.setVisibility(View.GONE);
                 }
+                String likeCount = content.like_count;
+                if (!TextUtils.isEmpty(likeCount)) {
+                    ((ViewHolder) viewHolder).mLikeCount.setText(likeCount);
+                } else {
+                    ((ViewHolder) viewHolder).mLikeCount.setText("0");
+                }
             }
 
             //时间暂时由服务端下发
@@ -79,6 +87,11 @@ public class FeedItem extends SimpleItem<FeedModel> {
                 ((ViewHolder) viewHolder).mTvTime.setVisibility(View.VISIBLE);
                 ((ViewHolder) viewHolder).mTvTime.setText(updateTime);
             }
+
+            boolean is_mine_like = mModel.is_mine_like;
+            Context context = viewHolder.itemView.getContext();
+            int resId = is_mine_like ? R.drawable.ic_like : R.drawable.ic_un_like;
+            ((ViewHolder) viewHolder).mLikeIcon.setImageDrawable(context.getResources().getDrawable(resId));
         }
     }
 
@@ -100,6 +113,8 @@ public class FeedItem extends SimpleItem<FeedModel> {
         public TextView mTvContent;
         public CircleImageView mIvAvatar;
         public RecyclerView mPicRecycler;
+        public ImageView mLikeIcon;
+        public TextView mLikeCount;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -108,6 +123,8 @@ public class FeedItem extends SimpleItem<FeedModel> {
             mTvContent = itemView.findViewById(R.id.tv_content);
             mIvAvatar = itemView.findViewById(R.id.iv_avatar);
             mPicRecycler = itemView.findViewById(R.id.v_recycler);
+            mLikeIcon = itemView.findViewById(R.id.iv_like);
+            mLikeCount = itemView.findViewById(R.id.tv_like_count);
         }
     }
 }

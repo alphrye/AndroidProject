@@ -11,6 +11,7 @@ public class FeedModel extends SimpleModel {
 
     public FeedUserBean user;
     public FeedContentBean content;
+    public boolean is_mine_like;
     public String update_time;
 
     @Override
@@ -33,6 +34,7 @@ public class FeedModel extends SimpleModel {
 
         public String text;
         public List<String> pic_urls;
+        public String like_count;
 
         public boolean hasPic () {
             return pic_urls != null && !pic_urls.isEmpty();
