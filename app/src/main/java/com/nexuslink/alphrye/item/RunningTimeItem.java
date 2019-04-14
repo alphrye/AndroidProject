@@ -31,7 +31,7 @@ public class RunningTimeItem extends SimpleItem<RunningTimeModel> {
                     case NewCycleFragment.FLAG_TIME_START:
                         //开始计时
                         Log.d("Test", "bindViewHolder: ");
-                        ((ViewHolder) viewHolder).mTvTitle.setText("TEST");
+//                        ((ViewHolder) viewHolder).mTvTitle.setText("TEST");
                         break;
                     case NewCycleFragment.FLAG_TIME_PAUSE:
                         ((ViewHolder) viewHolder).mChronometer.stop();

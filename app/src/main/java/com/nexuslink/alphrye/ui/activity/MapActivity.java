@@ -365,12 +365,6 @@ public class MapActivity extends MyActivity {
     }
 
     @Override
-    public boolean isStatusBarEnabled() {
-        // 使用沉浸式状态栏
-        return !super.isStatusBarEnabled();
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_SEARCH_TIP) {

@@ -134,11 +134,11 @@ public class NewCycleFragment extends MyLazyFragment {
 
         modelList = new ArrayList<>();
 
-        modelList.add(new RunningDataModel("里程(KM)", "0"));
-        modelList.add(new RunningDataModel("热量(焦耳)", "0"));
-        modelList.add(new RunningDataModel("骑行次数", "10"));
-        modelList.add(new RunningDataModel("平均速度(KM/H)", "0"));
-        modelList.add(new RunningDataModel("最高速度(KM/H)", "0"));
+        modelList.add(new RunningDataModel("里程(KM)", "2.3 KM"));
+        modelList.add(new RunningDataModel("热量(卡路里)", "52 卡路里"));
+        modelList.add(new RunningDataModel("骑行次数(次)", "3 次"));
+        modelList.add(new RunningDataModel("平均速度(KM/H)", "12 KM/H"));
+        modelList.add(new RunningDataModel("最高速度(KM/H)", "15 KM/H"));
 
         modelList.add(new RunningTimeModel("骑行时间(秒)"));
 

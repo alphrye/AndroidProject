@@ -103,17 +103,33 @@
         android:layout_height="match_parent">
     </com.amap.api.maps.MapView>
 
-    <TextView
-        android:id="@+id/v_search"
-        android:text="@string/search"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:padding="8dp"
-        android:textSize="18sp"
-        android:background="@color/white"/>
+        android:background="@color/white"
+        android:padding="8dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_search"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/v_search"
+            android:text="@string/search_destination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
 
     <com.amap.api.navi.AMapNaviView
         android:visibility="gone"
