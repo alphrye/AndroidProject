@@ -84,7 +84,7 @@ public class DashboardView extends View {
         perDegree = (int) ((360.0 - mA) / (mNumScaleTotal - 1));
         mValueLongPer = 3;
         initPaints();
-        setBackgroundColor(Color.parseColor("#252831"));
+        setBackgroundColor(Color.parseColor("#24252B"));
     }
 
     /**

@@ -159,4 +159,10 @@ public class NewCycleFragment extends MyLazyFragment {
         return new NewCycleFragment();
     }
 
+    @Override
+    public boolean isStatusBarEnabled() {
+        // 使用沉浸式状态栏
+        return !super.isStatusBarEnabled();
+    }
+
 }

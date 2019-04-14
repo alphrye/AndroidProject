@@ -1,5 +1,6 @@
 package com.nexuslink.alphrye.item;
 
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.nexuslink.alphrye.SimpleItem;
+import com.nexuslink.alphrye.common.MyApplication;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.model.RunningDataModel;
 
@@ -27,6 +29,8 @@ public class RunningDataItem extends SimpleItem<RunningDataModel> {
             if (TextUtils.isEmpty(data)) {
                 data = "Null";
             }
+            Typeface typeface = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "lcd_num.ttf");
+            ((ViewHolder) viewHolder).mTvData.setTypeface(typeface);
             ((ViewHolder) viewHolder).mTvData.setText(data);
         }
     }

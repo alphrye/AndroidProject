@@ -1,5 +1,6 @@
 package com.nexuslink.alphrye.item;
 
+import android.graphics.Typeface;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.widget.Chronometer;
 import android.widget.TextView;
 
 import com.nexuslink.alphrye.SimpleItem;
+import com.nexuslink.alphrye.common.MyApplication;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.model.RunningTimeModel;
 import com.nexuslink.alphrye.ui.fragment.NewCycleFragment;
@@ -46,6 +48,8 @@ public class RunningTimeItem extends SimpleItem<RunningTimeModel> {
                 title = "Null";
             }
             ((ViewHolder) viewHolder).mTvTitle.setText(title);
+            Typeface typeface = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "lcd_num.ttf");
+            ((ViewHolder) viewHolder).mChronometer.setTypeface(typeface);
             ((ViewHolder) viewHolder).mChronometer.setBase(SystemClock.elapsedRealtime());
             ((ViewHolder) viewHolder).mChronometer.start();
         }
