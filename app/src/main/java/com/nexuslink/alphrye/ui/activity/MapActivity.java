@@ -6,8 +6,10 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -40,6 +42,7 @@ import com.nexuslink.alphrye.helper.RideRouteOverlay;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import butterknife.BindView;
 import butterknife.OnClick;
 
 import static com.nexuslink.alphrye.ui.activity.HomeActivity.REQUEST_SEARCH_TIP;
@@ -110,6 +113,15 @@ public class MapActivity extends MyActivity {
      * 当前坐标(经度)
      */
     private double mCurLongitude;
+
+    @BindView(R.id.tv_location)
+    TextView mTvLocation;
+
+    @BindView(R.id.tv_location_data)
+    TextView mTvLocationData;
+
+    @BindView(R.id.tv_status)
+    TextView mTvStatus;
 
     /**
      * 搜索事件
@@ -230,28 +242,23 @@ public class MapActivity extends MyActivity {
                         mCurLatitude = aMapLocation.getLatitude();
                         mCurLongitude = aMapLocation.getLongitude();
                     }
-                    aMapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-                    aMapLocation.getLatitude();//获取纬度
-                    aMapLocation.getLongitude();//获取经度
-                    aMapLocation.getAccuracy();//获取精度信息
-                    aMapLocation.getAddress();//地址，如果option中设置isNeedAddress为false，则没有此结果，网络定位结果中会有地址信息，GPS定位不返回地址信息。
-                    aMapLocation.getCountry();//国家信息
-                    aMapLocation.getProvince();//省信息
-                    aMapLocation.getCity();//城市信息
-                    aMapLocation.getDistrict();//城区信息
-                    aMapLocation.getStreet();//街道信息
-                    aMapLocation.getStreetNum();//街道门牌号信息
-                    aMapLocation.getCityCode();//城市编码
-                    aMapLocation.getAdCode();//地区编码
-                    aMapLocation.getAoiName();//获取当前定位点的AOI信息
-                    aMapLocation.getBuildingId();//获取当前室内定位的建筑物Id
-                    aMapLocation.getFloor();//获取当前室内定位的楼层
-                    aMapLocation.getGpsAccuracyStatus();//获取GPS的当前状态
-                    //获取定位时间
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date date = new Date(aMapLocation.getTime());
-                    df.format(date);
-                    MyLogUtil.d(TAG, "onLocationChanged: " + aMapLocation.getStreet());
+
+                    String locationString = aMapLocation.getDistrict() + aMapLocation.getStreet();
+                    if (TextUtils.isEmpty(locationString)) {
+                        locationString = "--";
+                    }
+                    mTvLocation.setText(locationString);
+                    String latitudeString = String.format("%.2f", mCurLatitude);
+                    String longitudeString = String.format("%.2f", mCurLongitude);
+                    if (TextUtils.isEmpty(latitudeString)) {
+                        latitudeString = "--";
+                    }
+
+                    if (TextUtils.isEmpty(longitudeString)) {
+                        latitudeString = "--";
+                    }
+
+                    mTvLocationData.setText("维度: " + latitudeString + " 经度: " + longitudeString);
                 }else {
                     //定位失败时，可通过ErrCode（错误码）信息来确定失败的原因，errInfo是错误信息，详见错误码表。
                     MyLogUtil.d(TAG,"location Error, ErrCode:"
@@ -334,6 +341,11 @@ public class MapActivity extends MyActivity {
                 }
             }
         });
+
+        mTvLocation.setText("--");
+        mTvLocationData.setText("维度: -- 维度: --");
+        mTvStatus.setText(R.string.locating);
+        mTvStatus.setBackgroundColor(Color.parseColor("#1DA1F2"));
     }
 
     @Override
