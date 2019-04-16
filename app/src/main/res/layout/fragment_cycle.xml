@@ -5,17 +5,6 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.hjq.bar.TitleBar
-        android:visibility="gone"
-        android:id="@+id/tb_cycle_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:backButton="false"
-        android:background="#252831"
-        app:titleColor="@color/white"
-        app:title="@string/home_nav_cycle"
-        app:lineColor="#252831"/>
-
     <LinearLayout
         android:visibility="gone"
         android:layout_weight="0.5"
@@ -90,46 +79,99 @@
         </LinearLayout>
     </LinearLayout>
 
-    <com.nexuslink.alphrye.ui.weight.DashboardView
-        android:visibility="gone"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="2"/>
-
     <com.amap.api.maps.MapView
         android:id="@+id/v_map"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </com.amap.api.maps.MapView>
 
-    <LinearLayout
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:background="@color/white"
-        android:padding="8dp">
+        android:background="@color/white">
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_search"
-            android:layout_gravity="center_vertical" />
-
-        <TextView
-            android:id="@+id/v_search"
-            android:text="@string/search_destination"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="8dp"
-            android:layout_marginLeft="8dp"
-            android:textStyle="bold"/>
+            android:padding="10dp">
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_search"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:id="@+id/v_search"
+                android:text="@string/search_destination"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="8dp"
+                android:layout_marginLeft="8dp"
+                android:textStyle="bold"
+                android:textColor="@color/color_999999"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_zoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/btn_zoom_large"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_zoom_large"
+                android:layout_gravity="center"
+                android:padding="10dp" />
+
+            <ImageView
+                android:id="@+id/btn_zoom_small"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_zoom_small"
+                android:layout_gravity="center"
+                android:padding="8dp" />
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_alignParentBottom="true">
+
+        <ImageView
+            android:id="@+id/btn_cur_loacation"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_cur_location"
+            android:padding="8dp"/>
+
+    </android.support.v7.widget.CardView>
 
     <com.amap.api.navi.AMapNaviView
         android:visibility="gone"

@@ -1,5 +1,6 @@
 package com.nexuslink.alphrye.ui.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+
+import static com.nexuslink.alphrye.ui.activity.HomeActivity.REQUEST_SEARCH_TIP;
 
 public class SearchActivity extends MyActivity implements Inputtips.InputtipsListener, SimpleAdapter.OnItemClickListener {
 

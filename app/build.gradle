@@ -142,7 +142,7 @@ dependencies {
     // 二维码：https://github.com/bingoogolapple/BGAQRCode-Android
 
     //定位功能
-    implementation 'com.amap.api:location:4.5.0'
+    implementation 'com.amap.api:location:4.5.1'
     //3d地图以及导航功能
     implementation 'com.amap.api:navi-3dmap:5.1.0'
     //搜索功能

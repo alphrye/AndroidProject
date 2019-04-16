@@ -1,5 +1,6 @@
 package com.nexuslink.alphrye.common;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.view.View;
 
@@ -132,5 +133,9 @@ public abstract class MyActivity extends UIActivity
 
     public void toast(Object object) {
         ToastUtils.show(object);
+    }
+
+    public static Context getAppContext() {
+        return MyApplication.getContext();
     }
 }
