@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -119,6 +120,16 @@ public class MapActivity extends MyActivity {
      */
     private boolean notNeedMoveToCurPos;
 
+    /**
+     * 规划路径结果
+     */
+    private RideRouteResult mSelectResult;
+
+    /**
+     * 是否是展示规划路线状态
+     */
+    private boolean isShowingRout;
+
     @BindView(R.id.tv_location)
     TextView mTvLocation;
 
@@ -127,6 +138,12 @@ public class MapActivity extends MyActivity {
 
     @BindView(R.id.tv_status)
     TextView mTvStatus;
+
+    @BindView(R.id.btn_start_navi)
+    CardView mBtnStartNavi;
+
+    @BindView(R.id.btn_cancel)
+    CardView mBtnCancel;
 
     /**
      * 搜索事件
@@ -152,6 +169,26 @@ public class MapActivity extends MyActivity {
     @OnClick(R.id.btn_cur_loacation) void onCurLocationClick() {
         MyLogUtil.d(TAG, "onCurLocationClick: latitude:" + mCurLatitude + " longitude:" + mCurLongitude);
         mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mCurLatitude, mCurLongitude), DEFAULT_ZOOM_LEVEL));
+    }
+
+    @OnClick(R.id.btn_start_navi) void  onStartNavi() {
+        if (mSelectResult == null) {
+            return;
+        }
+        Intent intent = new Intent(getContext(), RideRouteCalculateActivity.class);
+        intent.putExtra("start_point", mSelectResult.getStartPos());
+        intent.putExtra("end_point", mSelectResult.getTargetPos());
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.btn_cancel) void onCancel() {
+        if (isShowingRout) {
+            mAmap.clear();
+            mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mCurLatitude, mCurLongitude), DEFAULT_ZOOM_LEVEL));
+            isShowingRout = false;
+            mBtnCancel.setVisibility(View.GONE);
+            mBtnStartNavi.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -267,6 +304,7 @@ public class MapActivity extends MyActivity {
         mLocationClient.stopLocation();
         mLocationClient.startLocation();
 
+        //路径规划
         mRouteSearch = new RouteSearch(getContext());
         mRouteSearch.setRouteSearchListener(new RouteSearch.OnRouteSearchListener() {
             @Override
@@ -286,11 +324,11 @@ public class MapActivity extends MyActivity {
 
             @Override
             public void onRideRouteSearched(RideRouteResult result, int errorCode) {
-                Log.d("Test", "onRideRouteSearched: ");
                 mAmap.clear();// 清理地图上的所有覆盖物
                 if (errorCode == AMapException.CODE_AMAP_SUCCESS) {
                     if (result != null && result.getPaths() != null) {
                         if (result.getPaths().size() > 0) {
+                            isShowingRout = true;
                             final RidePath ridePath = result.getPaths()
                                     .get(0);
                             if(ridePath == null) {
@@ -303,37 +341,22 @@ public class MapActivity extends MyActivity {
                             rideRouteOverlay.removeFromMap();
                             rideRouteOverlay.addToMap();
                             rideRouteOverlay.zoomToSpan();
-//                                mBottomLayout.setVisibility(View.VISIBLE);
                             int dis = (int) ridePath.getDistance();
                             int dur = (int) ridePath.getDuration();
                             String des = AMapUtil.getFriendlyTime(dur)+"("+AMapUtil.getFriendlyLength(dis)+")";
-//                                mRotueTimeDes.setText(des);
-//                                mRouteDetailDes.setVisibility(View.GONE);
-//                                mBottomLayout.setOnClickListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View v) {
-//                                        Intent intent = new Intent(mContext,
-//                                                RideRouteDetailActivity.class);
-//                                        intent.putExtra("ride_path", ridePath);
-//                                        intent.putExtra("ride_result",
-//                                                mRideRouteResult);
-//                                        startActivity(intent);
-//                                    }
-//                                });
 
-                            Intent intent = new Intent(getContext(), RideRouteCalculateActivity.class);
-                            intent.putExtra("start_point", result.getStartPos());
-                            intent.putExtra("end_point", result.getTargetPos());
-                            startActivity(intent);
+                            mBtnStartNavi.setVisibility(View.VISIBLE);
+                            mBtnCancel.setVisibility(View.VISIBLE);
+                            mSelectResult = result;
 
-                        } else if (result != null && result.getPaths() == null) {
-//                                ToastUtil.show(mContext, R.string.no_result);
+                        } else if (result.getPaths() == null) {
+                                toast(R.string.no_result);
                         }
                     } else {
-//                            ToastUtil.show(mContext, R.string.no_result);
+                            toast(R.string.no_result);
                     }
                 } else {
-//                        ToastUtil.showerror(this.getApplicationContext(), errorCode);
+                        toast("error code : "+ errorCode);
                 }
             }
         });
@@ -342,6 +365,9 @@ public class MapActivity extends MyActivity {
         mTvLocationData.setText("维度: -- 维度: --");
         mTvStatus.setText(R.string.locating);
         mTvStatus.setBackgroundColor(Color.parseColor("#1DA1F2"));
+
+        mBtnStartNavi.setVisibility(View.GONE);
+        mBtnCancel.setVisibility(View.GONE);
     }
 
     /**
@@ -387,14 +413,12 @@ public class MapActivity extends MyActivity {
     public void onResume() {
         super.onResume();
         mMapView.onResume();
-//        mAMapNaviView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mMapView.onPause();
-//        mAMapNaviView.onPause();
     }
 
     @Override
@@ -408,8 +432,7 @@ public class MapActivity extends MyActivity {
         if (mMapView != null) {
             mMapView.onDestroy();
         }
-//        mAMapNaviView.onDestroy();
-        //销毁定位客户端，同时销毁本地定位服务。
+
         if (mLocationClient != null) {
             mLocationClient.onDestroy();
         }
@@ -432,7 +455,6 @@ public class MapActivity extends MyActivity {
                 if (tip == null) {
                     return;
                 }
-                Log.d("Test", "onActivityResult: " + tip.getName());
                 final LatLonPoint point = tip.getPoint();
                 if (point == null) {
                     return;
@@ -452,5 +474,14 @@ public class MapActivity extends MyActivity {
      */
     private LatLonPoint getCurrentPoint() {
         return new LatLonPoint(mCurLatitude, mCurLongitude);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isShowingRout) {
+            onCancel();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

@@ -87,6 +87,7 @@
     </com.amap.api.maps.MapView>
 
     <android.support.v7.widget.CardView
+        android:id="@+id/card_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
@@ -236,5 +237,47 @@
             android:padding="8dp"/>
 
     </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:layout_above="@id/info_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/btn_start_navi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_main"
+            app:cardCornerRadius="18dp"
+            android:backgroundTint="@color/color_main">
+
+            <TextView
+                android:textColor="@color/white"
+                android:text="@string/start_navi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"/>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/color_main"
+            app:cardCornerRadius="18dp"
+            android:layout_marginLeft="16dp"
+            android:backgroundTint="@color/color_main"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:textColor="@color/white"
+                android:text="@string/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"/>
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
 
 </RelativeLayout>
