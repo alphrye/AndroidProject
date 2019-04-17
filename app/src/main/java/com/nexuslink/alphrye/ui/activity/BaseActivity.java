@@ -10,12 +10,14 @@ import com.amap.api.navi.AMapNavi;
 import com.amap.api.navi.AMapNaviListener;
 import com.amap.api.navi.AMapNaviView;
 import com.amap.api.navi.AMapNaviViewListener;
+import com.amap.api.navi.model.AMapCalcRouteResult;
 import com.amap.api.navi.model.AMapLaneInfo;
 import com.amap.api.navi.model.AMapModelCross;
 import com.amap.api.navi.model.AMapNaviCameraInfo;
 import com.amap.api.navi.model.AMapNaviCross;
 import com.amap.api.navi.model.AMapNaviInfo;
 import com.amap.api.navi.model.AMapNaviLocation;
+import com.amap.api.navi.model.AMapNaviRouteNotifyData;
 import com.amap.api.navi.model.AMapNaviTrafficFacilityInfo;
 import com.amap.api.navi.model.AMapServiceAreaInfo;
 import com.amap.api.navi.model.AimLessModeCongestionInfo;
@@ -110,6 +112,11 @@ public class BaseActivity extends Activity implements AMapNaviListener, AMapNavi
     }
 
     @Override
+    public void onGetNavigationText(String s) {
+
+    }
+
+    @Override
     public void onEndEmulatorNavi() {
         //结束模拟导航
     }
@@ -117,11 +124,6 @@ public class BaseActivity extends Activity implements AMapNaviListener, AMapNavi
     @Override
     public void onArriveDestination() {
         //到达目的地
-    }
-
-    @Override
-    public void onCalculateRouteSuccess() {
-
     }
 
     @Override
@@ -198,6 +200,11 @@ public class BaseActivity extends Activity implements AMapNaviListener, AMapNavi
     }
 
     @Override
+    public void updateIntervalCameraInfo(AMapNaviCameraInfo aMapNaviCameraInfo, AMapNaviCameraInfo aMapNaviCameraInfo1, int i) {
+
+    }
+
+    @Override
     public void onServiceAreaUpdate(AMapServiceAreaInfo[] amapServiceAreaInfos) {
 
     }
@@ -228,8 +235,23 @@ public class BaseActivity extends Activity implements AMapNaviListener, AMapNavi
     }
 
     @Override
+    public void showModeCross(AMapModelCross aMapModelCross) {
+
+    }
+
+    @Override
+    public void hideModeCross() {
+
+    }
+
+    @Override
     public void showLaneInfo(AMapLaneInfo[] laneInfos, byte[] laneBackgroundInfo, byte[] laneRecommendedInfo) {
         //显示车道信息
+
+    }
+
+    @Override
+    public void showLaneInfo(AMapLaneInfo aMapLaneInfo) {
 
     }
 
@@ -239,7 +261,7 @@ public class BaseActivity extends Activity implements AMapNaviListener, AMapNavi
     }
 
     @Override
-    public void onCalculateMultipleRoutesSuccess(int[] ints) {
+    public void onCalculateRouteSuccess(int[] ints) {
 
     }
 
@@ -284,6 +306,21 @@ public class BaseActivity extends Activity implements AMapNaviListener, AMapNavi
 
     }
 
+    @Override
+    public void onCalculateRouteSuccess(AMapCalcRouteResult aMapCalcRouteResult) {
+
+    }
+
+    @Override
+    public void onCalculateRouteFailure(AMapCalcRouteResult aMapCalcRouteResult) {
+
+    }
+
+    @Override
+    public void onNaviRouteNotify(AMapNaviRouteNotifyData aMapNaviRouteNotifyData) {
+
+    }
+
 
     @Override
     public void onLockMap(boolean isLock) {
@@ -294,6 +331,16 @@ public class BaseActivity extends Activity implements AMapNaviListener, AMapNavi
     public void onNaviViewLoaded() {
         Log.d("wlx", "导航页面加载成功");
         Log.d("wlx", "请不要使用AMapNaviView.getMap().setOnMapLoadedListener();会overwrite导航SDK内部画线逻辑");
+    }
+
+    @Override
+    public void onMapTypeChanged(int i) {
+
+    }
+
+    @Override
+    public void onNaviViewShowMode(int i) {
+
     }
 
     @Override

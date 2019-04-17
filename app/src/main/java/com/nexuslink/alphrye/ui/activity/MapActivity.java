@@ -62,7 +62,7 @@ public class MapActivity extends MyActivity {
     /**
      * 默认缩放大小
      */
-    public static final float DEFAULT_ZOOM_LEVEL = 17.0f;
+    public static final float DEFAULT_ZOOM_LEVEL = 18.0f;
 
     /**
      * GPS定位精度圆圈描边
@@ -114,6 +114,11 @@ public class MapActivity extends MyActivity {
      */
     private double mCurLongitude;
 
+    /**
+     * 不能自动移动到当前位置标志
+     */
+    private boolean notNeedMoveToCurPos;
+
     @BindView(R.id.tv_location)
     TextView mTvLocation;
 
@@ -145,6 +150,7 @@ public class MapActivity extends MyActivity {
     }
 
     @OnClick(R.id.btn_cur_loacation) void onCurLocationClick() {
+        MyLogUtil.d(TAG, "onCurLocationClick: latitude:" + mCurLatitude + " longitude:" + mCurLongitude);
         mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mCurLatitude, mCurLongitude), DEFAULT_ZOOM_LEVEL));
     }
 
@@ -169,13 +175,11 @@ public class MapActivity extends MyActivity {
           MyLocationStyle.LOCATION_TYPE_MAP_ROTATE: 连续定位、且将视角移动到地图中心点，地图依照设备方向旋转，定位点会跟随设备移动。（1秒1次定位）
           MyLocationStyle.LOCATION_TYPE_LOCATION_ROTATE: 连续定位、且将视角移动到地图中心点，定位点依照设备方向旋转，并且会跟随设备移动。（1秒1次定位）默认执行此种模式
         */
-        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_MAP_ROTATE_NO_CENTER);
         //设置精度圆圈填充颜色为透明
         myLocationStyle.radiusFillColor(Color.parseColor(GPS_CIRCLE_COLOR_STOCK));
         //设置描边颜色为透明
         myLocationStyle.strokeColor(Color.parseColor(GPS_CIRCLE_COLOR_FILL));
-        //定位图标
-        myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromResource(R.drawable.gps_point));
         //设置定位蓝点的Style
         mAmap.setMyLocationStyle(myLocationStyle);
         //设置视角等级
@@ -188,20 +192,6 @@ public class MapActivity extends MyActivity {
         mAmap.showIndoorMap(true);
         //地图上文案显示
         mAmap.showMapText(true);
-        //位置变化监听
-        mAmap.setOnMyLocationChangeListener(new AMap.OnMyLocationChangeListener() {
-            @Override
-            public void onMyLocationChange(Location location) {
-                if (location == null) {
-                    MyLogUtil.d("TAG", "Amap onMyLocationChange: location is null");
-                    return;
-                }
-                MyLogUtil.d("TAG", "Amap onMyLocationChange: location :( Altitude "
-                        + location.getAltitude() + ", Longitude " + location.getLongitude() + ")");
-                mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(location.getLatitude(), location.getLongitude()), DEFAULT_ZOOM_LEVEL));
-            }
-        });
 
         //地图UI设置
         UiSettings uiSettings = mAmap.getUiSettings();
@@ -214,6 +204,9 @@ public class MapActivity extends MyActivity {
             uiSettings.setLogoPosition(AMapOptions.LOGO_POSITION_BOTTOM_LEFT);
             //手势交互
             uiSettings.setAllGesturesEnabled(true);
+            // TODO: 2019/4/17 魔法数字
+            uiSettings.setLogoBottomMargin(300);
+            uiSettings.setLogoLeftMargin(50);
         }
 
         //定位请求
@@ -236,11 +229,14 @@ public class MapActivity extends MyActivity {
                     return;
                 }
                 if (aMapLocation.getErrorCode() == 0) {
-                    //可在其中解析amapLocation获取相应内容。
-                    if (mCurLatitude != aMapLocation.getLatitude()
-                            || mCurLongitude != aMapLocation.getLongitude()) {
-                        mCurLatitude = aMapLocation.getLatitude();
-                        mCurLongitude = aMapLocation.getLongitude();
+                    double latitude = aMapLocation.getLatitude();
+                    double longitude = aMapLocation.getLongitude();
+                    MyLogUtil.d(TAG, "onLocationChanged: latitude = " + latitude + " longitude = " + longitude);
+                    updateCurLocation(latitude, longitude);
+                    if (!notNeedMoveToCurPos) {
+                        mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                                new LatLng(latitude, longitude), DEFAULT_ZOOM_LEVEL));
+                        notNeedMoveToCurPos = true;
                     }
 
                     String locationString = aMapLocation.getDistrict() + aMapLocation.getStreet();
@@ -248,14 +244,14 @@ public class MapActivity extends MyActivity {
                         locationString = "--";
                     }
                     mTvLocation.setText(locationString);
-                    String latitudeString = String.format("%.2f", mCurLatitude);
-                    String longitudeString = String.format("%.2f", mCurLongitude);
+                    String latitudeString = String.format("%.2f", latitude);
+                    String longitudeString = String.format("%.2f", longitude);
                     if (TextUtils.isEmpty(latitudeString)) {
                         latitudeString = "--";
                     }
 
                     if (TextUtils.isEmpty(longitudeString)) {
-                        latitudeString = "--";
+                        longitudeString = "--";
                     }
 
                     mTvLocationData.setText("维度: " + latitudeString + " 经度: " + longitudeString);
@@ -348,6 +344,20 @@ public class MapActivity extends MyActivity {
         mTvStatus.setBackgroundColor(Color.parseColor("#1DA1F2"));
     }
 
+    /**
+     * 更新当前位置信息
+     * @param latitude
+     * @param longitude
+     */
+    private void updateCurLocation(double latitude, double longitude) {
+        if (mCurLatitude != latitude
+                || mCurLongitude != longitude) {
+            mCurLatitude = latitude;
+            mCurLongitude = longitude;
+        }
+
+    }
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_cycle;
@@ -436,6 +446,10 @@ public class MapActivity extends MyActivity {
         }
     }
 
+    /**
+     * 获取当前定位信息
+     * @return
+     */
     private LatLonPoint getCurrentPoint() {
         return new LatLonPoint(mCurLatitude, mCurLongitude);
     }
