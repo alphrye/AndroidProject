@@ -3,6 +3,7 @@ package com.nexuslink.alphrye.net.wrapper;
 import android.text.TextUtils;
 
 import com.nexuslink.alphrye.api.CommonApiService;
+import com.nexuslink.alphrye.api.EagleApiService;
 import com.nexuslink.alphrye.common.CommonConstance;
 import com.nexuslink.alphrye.net.bean.CommonNetBean;
 
@@ -28,9 +29,23 @@ public class RetrofitWrapper {
         return mInstance;
     }
 
+    public static RetrofitWrapper getInstance (String baseUrl) {
+        if (mInstance == null) {
+            mInstance = new RetrofitWrapper(baseUrl);
+        }
+        return mInstance;
+    }
+
     private RetrofitWrapper() {
         mRetrofit = new Retrofit.Builder()
                 .baseUrl(CommonConstance.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+    }
+
+    private RetrofitWrapper(String baseUrl) {
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
@@ -44,6 +59,12 @@ public class RetrofitWrapper {
         return RetrofitWrapper
                 .getInstance()
                 .createService(CommonApiService.class);
+    }
+
+    public EagleApiService getEagleCall() {
+        return RetrofitWrapper
+                .getInstance()
+                .createService(EagleApiService.class);
     }
 
     /**
