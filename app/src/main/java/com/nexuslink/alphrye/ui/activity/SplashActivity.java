@@ -42,15 +42,17 @@ public class SplashActivity extends MyActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 800);
+        }, 1000);
     }
 
     @Override
     protected void initData() {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8:00"));
-        int monthText = calendar.get(Calendar.MONTH);
-        int dayText = calendar.get(Calendar.DATE);
-        mTvMonth.setText(String.valueOf(monthText));
-        mTvDay.setText(String.valueOf(dayText));
+        Calendar calendar = Calendar.getInstance();
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DATE);
+        String monthText = String.valueOf(month);
+        String dayText = String.valueOf(day);
+        mTvMonth.setText(month < 10 ? "0" + monthText : monthText);
+        mTvDay.setText(day < 10 ? "0" + dayText : dayText);
     }
 }
