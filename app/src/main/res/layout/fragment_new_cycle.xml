@@ -27,6 +27,7 @@
 
         <!--仪表盘-->
         <com.nexuslink.alphrye.ui.weight.DashboardView
+            android:id="@+id/v_dash_board"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -87,6 +88,14 @@
             android:layout_toRightOf="@id/btn_start_or_pause"
             android:layout_centerInParent="true"
             android:layout_toEndOf="@id/btn_start_or_pause" />
+
+        <TextView
+            android:id="@+id/tv_debug"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.5"
+            android:background="@color/color_main"
+            android:textColor="@color/white"/>
     </RelativeLayout>
 
 </LinearLayout>

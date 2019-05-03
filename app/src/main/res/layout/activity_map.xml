@@ -6,86 +6,14 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:visibility="gone"
-        android:layout_weight="0.5"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_gravity="center_horizontal">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_marginLeft="@dimen/space_32"
-            android:layout_marginRight="@dimen/space_32">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_flashlight_fill"/>
-
-            <TextView
-                android:text="AUTO"
-                android:layout_marginTop="@dimen/space_8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_marginLeft="@dimen/space_32"
-            android:layout_marginRight="@dimen/space_32">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/icon_weather"/>
-
-            <TextView
-                android:text="3℃"
-                android:layout_marginTop="@dimen/space_8"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:layout_marginLeft="@dimen/space_32"
-            android:layout_marginRight="@dimen/space_32">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_safe"/>
-
-            <TextView
-                android:text="ON"
-                android:layout_marginTop="@dimen/space_8"
-                android:textColor="@color/white"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"/>
-        </LinearLayout>
-    </LinearLayout>
-
+    <!--地图-->
     <com.amap.api.maps.MapView
         android:id="@+id/v_map"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </com.amap.api.maps.MapView>
 
+    <!--地点搜索-->
     <android.support.v7.widget.CardView
         android:id="@+id/card_search"
         android:layout_width="match_parent"
@@ -122,6 +50,7 @@
 
     </android.support.v7.widget.CardView>
 
+    <!--地图缩放-->
     <android.support.v7.widget.CardView
         android:id="@+id/card_zoom"
         android:layout_width="wrap_content"
@@ -156,6 +85,7 @@
 
     </android.support.v7.widget.CardView>
 
+    <!--当前位置信息-->
     <android.support.v7.widget.CardView
         android:id="@+id/info_card"
         android:layout_alignParentBottom="true"
@@ -219,15 +149,16 @@
 
     </android.support.v7.widget.CardView>
 
+    <!--当前位置-->
     <android.support.v7.widget.CardView
-        android:layout_above="@id/info_card"
+        android:layout_below="@id/card_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp">
+        android:layout_marginTop="16dp">
 
         <ImageView
             android:id="@+id/btn_cur_loacation"
@@ -238,6 +169,7 @@
 
     </android.support.v7.widget.CardView>
 
+    <!--导航相关-->
     <LinearLayout
         android:layout_above="@id/info_card"
         android:layout_width="wrap_content"

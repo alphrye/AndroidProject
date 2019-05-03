@@ -3,12 +3,10 @@ package com.nexuslink.alphrye.ui.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,7 +19,6 @@ import com.amap.api.maps.AMapOptions;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
-import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.MyLocationStyle;
@@ -39,9 +36,6 @@ import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.helper.AMapUtil;
 import com.nexuslink.alphrye.helper.MyLogUtil;
 import com.nexuslink.alphrye.helper.RideRouteOverlay;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -175,6 +169,7 @@ public class MapActivity extends MyActivity {
         if (mSelectResult == null) {
             return;
         }
+        closeRoutePreview();
         Intent intent = new Intent(getContext(), RideRouteCalculateActivity.class);
         intent.putExtra("start_point", mSelectResult.getStartPos());
         intent.putExtra("end_point", mSelectResult.getTargetPos());
@@ -182,15 +177,8 @@ public class MapActivity extends MyActivity {
     }
 
     @OnClick(R.id.btn_cancel) void onCancel() {
-        if (isShowingRout) {
-            mAmap.clear();
-            mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mCurLatitude, mCurLongitude), DEFAULT_ZOOM_LEVEL));
-            isShowingRout = false;
-            mBtnCancel.setVisibility(View.GONE);
-            mBtnStartNavi.setVisibility(View.GONE);
-        }
+        closeRoutePreview();
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -242,7 +230,7 @@ public class MapActivity extends MyActivity {
             //手势交互
             uiSettings.setAllGesturesEnabled(true);
             // TODO: 2019/4/17 魔法数字
-            uiSettings.setLogoBottomMargin(300);
+            uiSettings.setLogoBottomMargin(280);
             uiSettings.setLogoLeftMargin(50);
         }
 
@@ -370,23 +358,9 @@ public class MapActivity extends MyActivity {
         mBtnCancel.setVisibility(View.GONE);
     }
 
-    /**
-     * 更新当前位置信息
-     * @param latitude
-     * @param longitude
-     */
-    private void updateCurLocation(double latitude, double longitude) {
-        if (mCurLatitude != latitude
-                || mCurLongitude != longitude) {
-            mCurLatitude = latitude;
-            mCurLongitude = longitude;
-        }
-
-    }
-
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_cycle;
+        return R.layout.activity_map;
     }
 
     @Override
@@ -460,20 +434,12 @@ public class MapActivity extends MyActivity {
                     return;
                 }
 
-                RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(getCurrentPoint(), point);
+                RouteSearch.FromAndTo fromAndTo = new RouteSearch.FromAndTo(new LatLonPoint(mCurLatitude, mCurLongitude), point);
 
                 RouteSearch.RideRouteQuery query = new RouteSearch.RideRouteQuery(fromAndTo);
                 mRouteSearch.calculateRideRouteAsyn(query);
             }
         }
-    }
-
-    /**
-     * 获取当前定位信息
-     * @return
-     */
-    private LatLonPoint getCurrentPoint() {
-        return new LatLonPoint(mCurLatitude, mCurLongitude);
     }
 
     @Override
@@ -484,4 +450,33 @@ public class MapActivity extends MyActivity {
             super.onBackPressed();
         }
     }
+
+    /**
+     * 更新当前位置信息
+     * @param latitude
+     * @param longitude
+     */
+    private void updateCurLocation(double latitude, double longitude) {
+        if (mCurLatitude != latitude
+                || mCurLongitude != longitude) {
+            mCurLatitude = latitude;
+            mCurLongitude = longitude;
+        }
+    }
+
+    /**
+     * 关闭路线预览
+     */
+    private void closeRoutePreview() {
+        if (isShowingRout) {
+            mAmap.clear();
+            mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mCurLatitude, mCurLongitude), DEFAULT_ZOOM_LEVEL));
+            isShowingRout = false;
+            mBtnCancel.setVisibility(View.GONE);
+            mBtnStartNavi.setVisibility(View.GONE);
+            //需要重新定位到当前位置
+            notNeedMoveToCurPos = false;
+        }
+    }
+
 }

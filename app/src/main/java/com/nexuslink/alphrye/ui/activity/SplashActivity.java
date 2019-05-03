@@ -9,9 +9,14 @@ import com.nexuslink.alphrye.common.MyActivity;
 import com.nexuslink.alphrye.cyctastic.R;
 
 import java.util.Calendar;
-import java.util.TimeZone;
 
 import butterknife.BindView;
+
+/**
+ * 闪屏页面
+ * @author yuanrui
+ * @date 2019/3/18
+ */
 
 public class SplashActivity extends MyActivity {
     @BindView(R.id.tv_month)

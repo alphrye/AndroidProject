@@ -10,6 +10,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.Typeface;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -61,6 +62,8 @@ public class DashboardView extends View {
     private int mNumScaleTotal;
 
     private int mValueLongPer;
+
+    private String mSpeedText;
 
     public DashboardView(Context context) {
         this(context, null);
@@ -230,10 +233,12 @@ public class DashboardView extends View {
      */
     private void drawSpeedText(Canvas canvas) {
         canvas.save();
-        String speedText = "0";
+        if (TextUtils.isEmpty(mSpeedText)) {
+            mSpeedText = "0";
+        }
         Rect speedTvRect = new Rect();
         mLCDPaint.setTextSize(120);
-        mLCDPaint.getTextBounds(speedText, 0, speedText.length(), speedTvRect);
+        mLCDPaint.getTextBounds(mSpeedText, 0, mSpeedText.length(), speedTvRect);
 
         String tvKmPerHour = "km/h";
         Rect tvKmPerHourRect = new Rect();
@@ -244,7 +249,7 @@ public class DashboardView extends View {
         float startY = getHeight() / 2 +  getWidth() / 4 + mDeviation;
 
         mLCDPaint.setTextSize(120);
-        canvas.drawText(speedText, startX, startY, mLCDPaint);
+        canvas.drawText(mSpeedText, startX, startY, mLCDPaint);
 
         mLCDPaint.setTextSize(60);
         canvas.drawText(tvKmPerHour, startX + speedTvRect.width() + len, startY, mLCDPaint);
@@ -268,5 +273,10 @@ public class DashboardView extends View {
         // TODO: 2019/2/28 设置一个最快和最慢时间
         valueAnimator.setDuration((long) (value * 100));
         valueAnimator.start();
+    }
+
+    public void setSpeed(float speed) {
+        mSpeedText = speed + "";
+        invalidate();
     }
 }

@@ -11,6 +11,7 @@ import com.nexuslink.alphrye.SimpleItem;
 import com.nexuslink.alphrye.common.MyApplication;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.model.RunningDataModel;
+import com.nexuslink.alphrye.ui.fragment.NewCycleFragment;
 
 import java.util.List;
 
@@ -20,6 +21,17 @@ public class RunningDataItem extends SimpleItem<RunningDataModel> {
     protected void bindViewHolder(RecyclerView.ViewHolder viewHolder, int position, List<Object> payloads) {
         super.bindViewHolder(viewHolder, position, payloads);
         if (viewHolder instanceof  ViewHolder) {
+            if (!payloads.isEmpty()) {
+                int payload = (int) payloads.get(0);
+                if (payload == NewCycleFragment.POSITION_ALTITUDE) {
+                    String data = mModel.mData;
+                    if (TextUtils.isEmpty(data)) {
+                        data = "Null";
+                    }
+                    ((ViewHolder) viewHolder).mTvData.setText(data);
+                }
+                return;
+            }
             String title = mModel.mTitle;
             if (TextUtils.isEmpty(title)) {
                 title = "Null";
