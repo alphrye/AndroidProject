@@ -163,9 +163,9 @@ public class NewCycleFragment extends MyLazyFragment {
 
         modelList = new ArrayList<>();
 
-        modelList.add(0, new RunningDataModel("里程(KM)", "-- KM"));
-        modelList.add(1, new RunningDataModel("热量(卡路里)", "-- 卡路里"));
-        modelList.add(POSITION_ALTITUDE, new RunningDataModel("实时海拔", "-- KM"));
+        modelList.add(0, new RunningDataModel("里程(KM)", "--"));
+        modelList.add(1, new RunningDataModel("热量(卡路里)", "--"));
+        modelList.add(POSITION_ALTITUDE, new RunningDataModel("实时海拔(M)", "--"));
 
         modelList.add(3, new RunningTimeModel("骑行时间(秒)"));
 
@@ -264,13 +264,12 @@ public class NewCycleFragment extends MyLazyFragment {
         if (location == null) {
             return;
         }
-        double altitude = location.getAltitude();
-        MyLogUtil.d(TAG, "updateAltitudeByLocation: " + altitude);
-//        mTvDebug.setText(mTvDebug.getText() + " altitude: " + altitude);
-         SimpleModel model = modelList.get(POSITION_ALTITUDE);
-         if (model instanceof  RunningDataModel) {
-             ((RunningDataModel) model).mData = altitude + "";
-         }
+        double accAltitude = location.getAltitude();
+        MyLogUtil.d(TAG, "updateAltitudeByLocation: " + accAltitude);
+        SimpleModel model = modelList.get(POSITION_ALTITUDE);
+        if (model instanceof  RunningDataModel) {
+            ((RunningDataModel) model).mData = String.valueOf(Math.round(accAltitude));
+        }
         mSimpleAdapter.notifyItemChanged(POSITION_ALTITUDE, FLAG_UPDATE_ALTITUDE);
     }
 
