@@ -38,11 +38,12 @@ public class DashboardView extends View {
     /**绘制与指示器相关的画笔*/
     private Paint mIndicatorPaint;
 
-    private int perDegree;
+    private float perDegree;
 
     private int mCenterCircleRadius;
 
-    private float mCurValue;
+    /**当前速度*/
+    private float mCurSpeed;
 
     /**长刻度长度*/
     private int mScaleLongLen;
@@ -76,15 +77,15 @@ public class DashboardView extends View {
     public DashboardView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mCenterCircleRadius = 35;
-        mCurValue = 0.0f;
+        mCurSpeed = 0.0f;
         mScaleLongLen = 45;
         mScaleShortLen = 30;
         mLenToScaleStart = 30;
         mA = 120;
         numScaleLong = 9;
-        numScaleShortPer = 5;
+        numScaleShortPer = 2;
         mNumScaleTotal = (numScaleLong - 1) * numScaleShortPer + numScaleLong;
-        perDegree = (int) ((360.0 - mA) / (mNumScaleTotal - 1));
+        perDegree = ((360.0f - mA) / (mNumScaleTotal - 1));
         mValueLongPer = 3;
         initPaints();
         setBackgroundColor(Color.parseColor("#24252B"));
@@ -169,7 +170,7 @@ public class DashboardView extends View {
                 Rect rect =  new Rect();
                 mLCDPaint.setTextSize(70);
                 mLCDPaint.getTextBounds(text, 0, text.length(), rect);
-                canvas.rotate(- perDegree * (i - 6), longEndX + mLenToScaleStart + rect.width() / 2,  longEndY);
+                canvas.rotate(- perDegree * (i - (numScaleShortPer  + 1)), longEndX + mLenToScaleStart + rect.width() / 2,  longEndY);
                 canvas.drawText(text, longEndX + mLenToScaleStart,  longEndY + rect.height() / 2, mLCDPaint);
                 canvas.restore();
             } else {
@@ -216,7 +217,7 @@ public class DashboardView extends View {
         mIndicatorPaint.setColor(Color.parseColor("#1DA1F2"));
         LinearGradient mGradient = new LinearGradient(startX, startY, getWidth() / 2, getHeight() / 2 + mDeviation, new int[] {Color.parseColor("#00000000"), Color.parseColor("#FF0000")}, null,Shader.TileMode.MIRROR);
         mIndicatorPaint.setShader(mGradient);
-        canvas.rotate(- perDegree * 6 + mCurValue * perDegree, getWidth() / 2, getHeight() / 2 + mDeviation);
+        canvas.rotate(- perDegree * (numScaleShortPer + 1) + mCurSpeed * perDegree, getWidth() / 2, getHeight() / 2 + mDeviation);
         Path path = new Path();
         path.moveTo(startX, startY);
         path.lineTo(getWidth() / 2 + 30 + 35 + 40, getHeight() / 2 + 25 + mDeviation);
@@ -257,26 +258,31 @@ public class DashboardView extends View {
     }
 
     /**
-     * 更新指示器值
-     * @param value
+     * 更新当前的速度值
+     * @param speed
      */
-    public void updateToValue(float value) {
-        ValueAnimator valueAnimator = ValueAnimator.ofFloat(mCurValue, value);
+    public void updateSpeed(float speed) {
+        //速度没有变换、无效不用更新
+        if (mCurSpeed == speed
+                || speed < 0) {
+            return;
+        }
+        //相对相对精准的当前速度(速度转化，采用km/h)
+        float accurateSpeed = speed * 3.6f;
+        int generalSpeed = Math.round(accurateSpeed);
+        mSpeedText = String.valueOf(generalSpeed);
+
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(mCurSpeed, accurateSpeed);
         valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mCurValue = (float) animation.getAnimatedValue();
+                mCurSpeed = (float) animation.getAnimatedValue();
                 invalidate();
             }
         });
-        // TODO: 2019/2/28 设置一个最快和最慢时间
-        valueAnimator.setDuration((long) (value * 100));
+        valueAnimator.setDuration((long) (generalSpeed * 100));
         valueAnimator.start();
-    }
-
-    public void setSpeed(float speed) {
-        mSpeedText = speed + "";
         invalidate();
     }
 }
