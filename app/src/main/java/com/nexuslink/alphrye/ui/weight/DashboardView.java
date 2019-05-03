@@ -162,7 +162,7 @@ public class DashboardView extends View {
         canvas.rotate(-(90 - mA / 2), getWidth() / 2, getHeight() / 2 + mDeviation);
         for (int i = 0; i < mNumScaleTotal; i++) {
             if (i % (numScaleShortPer + 1)== 0) {
-                mScalePaint.setColor(Color.RED);
+                mScalePaint.setColor(Color.parseColor("#1DA1F2"));
                 mScalePaint.setStrokeWidth(STROKE_WIDTH_DEFAULT);
                 canvas.drawLine(startX, startY, longEndX, longEndY, mScalePaint);
                 canvas.save();
@@ -214,8 +214,7 @@ public class DashboardView extends View {
     private void drawSpeedIndicator(Canvas canvas, int startX, int startY, float radius) {
         canvas.save();
         mIndicatorPaint.setStyle(Paint.Style.FILL);
-        mIndicatorPaint.setColor(Color.parseColor("#1DA1F2"));
-        LinearGradient mGradient = new LinearGradient(startX, startY, getWidth() / 2, getHeight() / 2 + mDeviation, new int[] {Color.parseColor("#00000000"), Color.parseColor("#FF0000")}, null,Shader.TileMode.MIRROR);
+        LinearGradient mGradient = new LinearGradient(startX, startY, getWidth() / 2, getHeight() / 2 + mDeviation, new int[] {Color.parseColor("#00000000"), Color.parseColor("#1DA1F2")}, null,Shader.TileMode.MIRROR);
         mIndicatorPaint.setShader(mGradient);
         canvas.rotate(- perDegree * (numScaleShortPer + 1) + mCurSpeed * perDegree, getWidth() / 2, getHeight() / 2 + mDeviation);
         Path path = new Path();
