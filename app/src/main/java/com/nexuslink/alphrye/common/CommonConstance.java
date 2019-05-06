@@ -5,4 +5,10 @@ public interface CommonConstance {
     String BASE_URL = "http://alphrye.com";
 
     String EAGLE_URL = "https://tsapi.amap.com";
+
+    String KEY_EAGLE = "6cb0ab78c4a87cdd6f11bec9179eb13c";
+
+    // TODO: 2019/5/4 与业务绑定
+    String TERMINAL_HEAD = "Terminal_debug";
+    String SERVICE_HEAD = "Service_";
 }

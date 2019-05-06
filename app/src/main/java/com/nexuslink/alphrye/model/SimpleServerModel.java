@@ -7,6 +7,6 @@ package com.nexuslink.alphrye.model;
  * @date 2019/4/21
  */
 public class SimpleServerModel {
-    public String sid;
+    public long sid;
     public String name;
 }

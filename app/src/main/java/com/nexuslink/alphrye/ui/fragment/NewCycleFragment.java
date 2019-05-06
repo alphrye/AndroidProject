@@ -1,5 +1,10 @@
 package com.nexuslink.alphrye.ui.fragment;
 
+import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Criteria;
@@ -11,17 +16,40 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.amap.api.track.AMapTrackClient;
+import com.amap.api.track.ErrorCode;
+import com.amap.api.track.OnTrackLifecycleListener;
+import com.amap.api.track.TrackParam;
+import com.amap.api.track.query.model.AddTerminalRequest;
+import com.amap.api.track.query.model.AddTerminalResponse;
+import com.amap.api.track.query.model.AddTrackRequest;
+import com.amap.api.track.query.model.AddTrackResponse;
+import com.amap.api.track.query.model.QueryTerminalRequest;
+import com.amap.api.track.query.model.QueryTerminalResponse;
 import com.nexuslink.alphrye.SimpleAdapter;
 import com.nexuslink.alphrye.SimpleModel;
+import com.nexuslink.alphrye.api.EagleApiService;
+import com.nexuslink.alphrye.common.CommonConstance;
+import com.nexuslink.alphrye.common.MyApplication;
 import com.nexuslink.alphrye.common.MyLazyFragment;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.helper.MyLogUtil;
+import com.nexuslink.alphrye.helper.SimpleOnTrackLifecycleListener;
+import com.nexuslink.alphrye.helper.SimpleOnTrackListener;
+import com.nexuslink.alphrye.model.CommonEagleNetModel;
+import com.nexuslink.alphrye.model.FullServerModel;
 import com.nexuslink.alphrye.model.RunningDataModel;
 import com.nexuslink.alphrye.model.RunningTimeModel;
+import com.nexuslink.alphrye.model.ServerListModel;
+import com.nexuslink.alphrye.model.SimpleServerModel;
+import com.nexuslink.alphrye.net.wrapper.RetrofitWrapper;
+import com.nexuslink.alphrye.ui.activity.HomeActivity;
 import com.nexuslink.alphrye.ui.activity.MapActivity;
 import com.nexuslink.alphrye.ui.weight.DashboardView;
 
@@ -30,10 +58,17 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class NewCycleFragment extends MyLazyFragment {
 
     public static final String TAG = "NewCycleFragment";
+
+    private static final String CHANNEL_ID_SERVICE_RUNNING = "CHANNEL_ID_SERVICE_RUNNING";
 
     public static final int STATUS_READY = 0;
 
@@ -63,6 +98,108 @@ public class NewCycleFragment extends MyLazyFragment {
 
     private GnssStatus.Callback mGnssStatusCallback;
 
+    private AMapTrackClient mAMapTrackClient;
+
+    private long terminalId;
+
+    private long trackId;
+
+    private boolean isServiceRunning;
+
+    private boolean isGatherRunning;
+
+    /**
+     * 开关
+     */
+    private boolean uploadToTrack = false;
+
+
+    private OnTrackLifecycleListener onTrackListener = new SimpleOnTrackLifecycleListener() {
+        @Override
+        public void onBindServiceCallback(int status, String msg) {
+            Log.w(TAG, "onBindServiceCallback, status: " + status + ", msg: " + msg);
+        }
+
+        @Override
+        public void onStartTrackCallback(int status, String msg) {
+            if (status == ErrorCode.TrackListen.START_TRACK_SUCEE || status == ErrorCode.TrackListen.START_TRACK_SUCEE_NO_NETWORK) {
+                // 成功启动
+                Toast.makeText(getContext(), "启动服务成功", Toast.LENGTH_SHORT).show();
+                isServiceRunning = true;
+//                updateBtnStatus();
+                if (!isGatherRunning) {
+                    mAMapTrackClient.setTrackId(trackId);
+                    mAMapTrackClient.startGather(onTrackListener);
+                }
+            } else if (status == ErrorCode.TrackListen.START_TRACK_ALREADY_STARTED) {
+                // 已经启动
+                Toast.makeText(getContext(), "服务已经启动", Toast.LENGTH_SHORT).show();
+                isServiceRunning = true;
+
+                if (!isGatherRunning) {
+                    mAMapTrackClient.setTrackId(trackId);
+                    mAMapTrackClient.startGather(onTrackListener);
+                }
+//                updateBtnStatus();
+            } else {
+                Log.w(TAG, "error onStartTrackCallback, status: " + status + ", msg: " + msg);
+                Toast.makeText(getContext(),
+                        "error onStartTrackCallback, status: " + status + ", msg: " + msg,
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onStopTrackCallback(int status, String msg) {
+            if (status == ErrorCode.TrackListen.STOP_TRACK_SUCCE) {
+                // 成功停止
+                Toast.makeText(getContext(), "停止服务成功", Toast.LENGTH_SHORT).show();
+                isServiceRunning = false;
+                isGatherRunning = false;
+//                updateBtnStatus();
+            } else {
+                Log.w(TAG, "error onStopTrackCallback, status: " + status + ", msg: " + msg);
+                Toast.makeText(getContext(),
+                        "error onStopTrackCallback, status: " + status + ", msg: " + msg,
+                        Toast.LENGTH_LONG).show();
+
+            }
+        }
+
+        @Override
+        public void onStartGatherCallback(int status, String msg) {
+            if (status == ErrorCode.TrackListen.START_GATHER_SUCEE) {
+                Toast.makeText(getContext(), "定位采集开启成功", Toast.LENGTH_SHORT).show();
+                isGatherRunning = true;
+//                updateBtnStatus();
+            } else if (status == ErrorCode.TrackListen.START_GATHER_ALREADY_STARTED) {
+                Toast.makeText(getContext(), "定位采集已经开启", Toast.LENGTH_SHORT).show();
+                isGatherRunning = true;
+//                updateBtnStatus();
+            } else {
+                Log.w(TAG, "error onStartGatherCallback, status: " + status + ", msg: " + msg);
+                Toast.makeText(getContext(),
+                        "error onStartGatherCallback, status: " + status + ", msg: " + msg,
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onStopGatherCallback(int status, String msg) {
+            if (status == ErrorCode.TrackListen.STOP_GATHER_SUCCE) {
+                Toast.makeText(getContext(), "定位采集停止成功", Toast.LENGTH_SHORT).show();
+                isGatherRunning = false;
+//                updateBtnStatus();
+            } else {
+                Log.w(TAG, "error onStopGatherCallback, status: " + status + ", msg: " + msg);
+                Toast.makeText(getContext(),
+                        "error onStopGatherCallback, status: " + status + ", msg: " + msg,
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+    };
+
+
     @OnClick(R.id.iv_map)
     void onMapOpen(View view) {
         Intent intent = new Intent(getContext(), MapActivity.class);
@@ -85,6 +222,9 @@ public class NewCycleFragment extends MyLazyFragment {
                 return;
             }
             mSimpleAdapter.notifyItemChanged(pos, FLAG_TIME_START);
+
+            //开启猎鹰轨迹上报
+            startEagleReport();
         } else if (mCurrentStatus == STATUS_RUNNING) {
             //暂停
             mCurrentStatus = STATUS_PAUSE;
@@ -105,6 +245,226 @@ public class NewCycleFragment extends MyLazyFragment {
             mSimpleAdapter.notifyItemChanged(pos, FLAG_TIME_CONTINUE);
         }
     }
+
+    /**
+     * 开启猎鹰归集上报服务
+     */
+    private void startEagleReport() {
+        //检查服务是否开启
+        EagleApiService service = getEagleCallService();
+        service.listService(CommonConstance.KEY_EAGLE).enqueue(new Callback<CommonEagleNetModel<ServerListModel>>() {
+            @Override
+            public void onResponse(Call<CommonEagleNetModel<ServerListModel>> call, Response<CommonEagleNetModel<ServerListModel>> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                }
+                CommonEagleNetModel<ServerListModel> model = response.body();
+                if (model == null) {
+                    return;
+                }
+                ServerListModel data = model.data;
+                if (data == null) {
+                    return;
+                }
+                List<FullServerModel> results = data.results;
+                if (results == null
+                        || results.isEmpty()) {
+                    return;
+                }
+                String userId = getUserId();
+                if (TextUtils.isEmpty(userId)) {
+                    toast("user_id 为空");
+                    return;
+                }
+//                boolean hasService = false;
+                FullServerModel targetServerModel = null;
+                String serviceName = CommonConstance.SERVICE_HEAD+ userId;
+                for (FullServerModel serverModel : results) {
+                    if (serviceName.equals(serverModel.name)) {
+                        targetServerModel = serverModel;
+                        break;
+                    }
+                }
+                //targetServerModel不为空表示找到创建的Service
+                if (targetServerModel != null) {
+                    //service已经创建
+                    startTrack(targetServerModel.sid);
+                } else {
+                    //Service没有创建
+                    createEagleService();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CommonEagleNetModel<ServerListModel>> call, Throwable t) {
+                toast(t.toString());
+            }
+        });
+    }
+
+    /**
+     * 创建猎鹰服务
+     */
+    private void createEagleService() {
+        String userId = getUserId();
+        if (TextUtils.isEmpty(userId)) {
+            toast("user_id 为空");
+            return;
+        }
+        String name = CommonConstance.SERVICE_HEAD + userId;
+        String des = "record_ride";
+        EagleApiService service = getEagleCallService();
+        service.addService(CommonConstance.KEY_EAGLE, name, des)
+                .enqueue(new Callback<CommonEagleNetModel<SimpleServerModel>>() {
+                    @Override
+                    public void onResponse(Call<CommonEagleNetModel<SimpleServerModel>> call, Response<CommonEagleNetModel<SimpleServerModel>> response) {
+                        if (!response.isSuccessful()) {
+                            return;
+                        }
+                        CommonEagleNetModel<SimpleServerModel>  model = response.body();
+                        if (model == null) {
+                            return;
+                        }
+
+                        SimpleServerModel data = model.data;
+                        if (data == null) {
+                            return;
+                        }
+                        String serverName = data.name;
+                        long serverId = data.sid;
+                        startTrack(serverId);
+                    }
+
+                    @Override
+                    public void onFailure(Call<CommonEagleNetModel<SimpleServerModel>> call, Throwable t) {
+                        toast(t.toString());
+                    }
+                });
+    }
+
+    private String getUserId() {
+        return "user_1";
+    }
+
+    /**
+     * 获取猎鹰请求服务
+     * @return
+     */
+    private EagleApiService getEagleCallService() {
+        RetrofitWrapper wrapper = RetrofitWrapper.getInstance(CommonConstance.EAGLE_URL);
+        return wrapper.getEagleCall();
+    }
+
+//    /**
+//     * 添加当前终端
+//     * @param serverName
+//     * @param serverId
+//     */
+//    private void addCurTerminal(String serverName, String serverId) {
+//        String terminalName = "debug_phone";
+//        String terminalDes = "debug_device";
+//        RetrofitWrapper wrapper = RetrofitWrapper.getInstance(CommonConstance.EAGLE_URL);
+//        EagleApiService service = wrapper.getEagleCall();
+//        service.addTerminal(CommonConstance.KEY_EAGLE, serverId, terminalName, terminalDes, null)
+//                .enqueue(new Callback<CommonEagleNetModel<TerminalModel>>() {
+//            @Override
+//            public void onResponse(Call<CommonEagleNetModel<TerminalModel>> call, Response<CommonEagleNetModel<TerminalModel>> response) {
+//                if (!response.isSuccessful()) {
+//                    Log.d(TAG, "onResponse: " + response.message());
+//                    return;
+//                }
+//                CommonEagleNetModel<TerminalModel> model = response.body();
+//                if (model == null) {
+//                    return;
+//                }
+//                TerminalModel data = model.data;
+//                if (data == null) {
+//                    return;
+//                }
+//                String name = data.name;
+//                String serverId = data.sid;
+//                String terminalId = data.tid;
+//
+//
+//            }
+//
+//            @Override
+//            public void onFailure(Call<CommonEagleNetModel<TerminalModel>> call, Throwable t) {
+//
+//            }
+//        });
+//
+//    }
+//
+//    /**
+//     * 获取当前时间信息文本
+//     * 格式 ：20190503_174622
+//     * @return
+//     */
+//    private String getCurTimeInfo() {
+//        return "test";
+//    }
+
+    private void startTrack(final long serverId) {
+        // 先根据Terminal名称查询Terminal ID，如果Terminal还不存在，就尝试创建，拿到Terminal ID后，
+        // 用Terminal ID开启轨迹服务
+        mAMapTrackClient.queryTerminal(new QueryTerminalRequest(serverId, CommonConstance.TERMINAL_HEAD), new SimpleOnTrackListener() {
+            @Override
+            public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
+                if (queryTerminalResponse.isSuccess()) {
+                    if (queryTerminalResponse.isTerminalExist()) {
+                        // 当前终端已经创建过，直接使用查询到的terminal id
+                        terminalId = queryTerminalResponse.getTid();
+                        if (uploadToTrack) {
+                            mAMapTrackClient.addTrack(new AddTrackRequest(serverId, terminalId), new SimpleOnTrackListener() {
+                                @Override
+                                public void onAddTrackCallback(AddTrackResponse addTrackResponse) {
+                                    if (addTrackResponse.isSuccess()) {
+                                        // trackId需要在启动服务后设置才能生效，因此这里不设置，而是在startGather之前设置了track id
+                                        trackId = addTrackResponse.getTrid();
+                                        TrackParam trackParam = new TrackParam(serverId, terminalId);
+                                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                            trackParam.setNotification(createNotification());
+                                        }
+                                        mAMapTrackClient.startTrack(trackParam, onTrackListener);
+                                    } else {
+                                        Toast.makeText(getContext(), "网络请求失败，" + addTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            // 不指定track id，上报的轨迹点是该终端的散点轨迹
+                            TrackParam trackParam = new TrackParam(serverId, terminalId);
+                            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                trackParam.setNotification(createNotification());
+                            }
+                            mAMapTrackClient.startTrack(trackParam, onTrackListener);
+                        }
+                    } else {
+                        // 当前终端是新终端，还未创建过，创建该终端并使用新生成的terminal id
+                        mAMapTrackClient.addTerminal(new AddTerminalRequest(CommonConstance.TERMINAL_HEAD, serverId), new SimpleOnTrackListener() {
+                            @Override
+                            public void onCreateTerminalCallback(AddTerminalResponse addTerminalResponse) {
+                                if (addTerminalResponse.isSuccess()) {
+                                    terminalId = addTerminalResponse.getTid();
+                                    TrackParam trackParam = new TrackParam(serverId, terminalId);
+                                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        trackParam.setNotification(createNotification());
+                                    }
+                                    mAMapTrackClient.startTrack(trackParam, onTrackListener);
+                                } else {
+                                    Toast.makeText(getContext(), "网络请求失败，" + addTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    Toast.makeText(getContext(), "网络请求失败，" + queryTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
 
     private int getRunningTimeItemPos() {
         if (modelList == null || modelList.isEmpty()) {
@@ -179,6 +539,7 @@ public class NewCycleFragment extends MyLazyFragment {
 
     @Override
     protected void initData() {
+        mAMapTrackClient = new AMapTrackClient(MyApplication.getContext());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             mGnssStatusCallback = new GnssStatus.Callback() {
                 @Override
@@ -253,7 +614,6 @@ public class NewCycleFragment extends MyLazyFragment {
         };
         // TODO: 2019/4/21 权限申请
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
-
     }
 
     /**
@@ -328,5 +688,31 @@ public class NewCycleFragment extends MyLazyFragment {
 
             }
         }
+    }
+
+
+    /**
+     * 在8.0以上手机，如果app切到后台，系统会限制定位相关接口调用频率
+     * 可以在启动轨迹上报服务时提供一个通知，这样Service启动时会使用该通知成为前台Service，可以避免此限制
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    private Notification createNotification() {
+        Notification.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID_SERVICE_RUNNING, "app service", NotificationManager.IMPORTANCE_LOW);
+            nm.createNotificationChannel(channel);
+            builder = new Notification.Builder(MyApplication.getContext(), CHANNEL_ID_SERVICE_RUNNING);
+        } else {
+            builder = new Notification.Builder(MyApplication.getContext());
+        }
+        Intent nfIntent = new Intent(getContext(), HomeActivity.class);
+        nfIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        builder.setContentIntent(PendingIntent.getActivity(getContext(), 0, nfIntent, 0))
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("猎鹰sdk运行中")
+                .setContentText("猎鹰sdk运行中");
+        Notification notification = builder.build();
+        return notification;
     }
 }
