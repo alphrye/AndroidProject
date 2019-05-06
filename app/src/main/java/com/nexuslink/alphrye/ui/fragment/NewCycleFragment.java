@@ -104,6 +104,8 @@ public class NewCycleFragment extends MyLazyFragment {
 
     private long trackId;
 
+    private long serverId;
+
     private boolean isServiceRunning;
 
     private boolean isGatherRunning;
@@ -216,8 +218,11 @@ public class NewCycleFragment extends MyLazyFragment {
             }
             mSimpleAdapter.notifyItemChanged(pos, FLAG_TIME_START);
 
-            //开启猎鹰轨迹上报
-            startEagleReport();
+            //本地检查服务是否开启
+            if (!isServiceRunning) {
+                //开启猎鹰轨迹上报
+                startEagleReport();
+            }
         } else if (mCurrentStatus == STATUS_RUNNING) {
             //暂停
             mCurrentStatus = STATUS_PAUSE;
@@ -227,6 +232,17 @@ public class NewCycleFragment extends MyLazyFragment {
                 return;
             }
             mSimpleAdapter.notifyItemChanged(pos, FLAG_TIME_PAUSE);
+
+            //检查值得合法性：isServiceRunning应该为true，isGatherRunning应该为true
+            if (!isServiceRunning
+                    || !isGatherRunning) {
+                // TODO: 2019/5/6 恢复成开始状态
+                isGatherRunning = false;
+                isServiceRunning = false;
+                return;
+            }
+            //停止采集
+            mAMapTrackClient.stopGather(onTrackListener);
         } else if (mCurrentStatus == STATUS_PAUSE) {
             //继续
             mCurrentStatus = STATUS_RUNNING;
@@ -236,6 +252,17 @@ public class NewCycleFragment extends MyLazyFragment {
                 return;
             }
             mSimpleAdapter.notifyItemChanged(pos, FLAG_TIME_CONTINUE);
+
+            //检查值得合法性：isServiceRunning应该为true，isGatherRunning应该为false
+            if (!isServiceRunning || isGatherRunning) {
+                // TODO: 2019/5/6 恢复成开始状态
+                isGatherRunning = false;
+                isServiceRunning = false;
+                return;
+            }
+            //继续开始收集(根据trackId判断是否为同一记录)
+            mAMapTrackClient.setTrackId(trackId);
+            mAMapTrackClient.startGather(onTrackListener);
         }
     }
 
@@ -243,7 +270,7 @@ public class NewCycleFragment extends MyLazyFragment {
      * 开启猎鹰归集上报服务
      */
     private void startEagleReport() {
-        //检查服务是否开启
+        //远端检查服务是否开启
         EagleApiService service = getEagleCallService();
         service.listService(CommonConstance.KEY_EAGLE).enqueue(new Callback<CommonEagleNetModel<ServerListModel>>() {
             @Override
@@ -281,7 +308,8 @@ public class NewCycleFragment extends MyLazyFragment {
                 //targetServerModel不为空表示找到创建的Service
                 if (targetServerModel != null) {
                     //service已经创建
-                    startTrack(targetServerModel.sid);
+                    serverId = targetServerModel.sid;
+                    startTrack(serverId);
                 } else {
                     //Service没有创建
                     createEagleService();
@@ -323,8 +351,7 @@ public class NewCycleFragment extends MyLazyFragment {
                         if (data == null) {
                             return;
                         }
-                        String serverName = data.name;
-                        long serverId = data.sid;
+                        serverId = data.sid;
                         startTrack(serverId);
                     }
 
@@ -347,56 +374,6 @@ public class NewCycleFragment extends MyLazyFragment {
         RetrofitWrapper wrapper = RetrofitWrapper.getInstance(CommonConstance.EAGLE_URL);
         return wrapper.getEagleCall();
     }
-
-//    /**
-//     * 添加当前终端
-//     * @param serverName
-//     * @param serverId
-//     */
-//    private void addCurTerminal(String serverName, String serverId) {
-//        String terminalName = "debug_phone";
-//        String terminalDes = "debug_device";
-//        RetrofitWrapper wrapper = RetrofitWrapper.getInstance(CommonConstance.EAGLE_URL);
-//        EagleApiService service = wrapper.getEagleCall();
-//        service.addTerminal(CommonConstance.KEY_EAGLE, serverId, terminalName, terminalDes, null)
-//                .enqueue(new Callback<CommonEagleNetModel<TerminalModel>>() {
-//            @Override
-//            public void onResponse(Call<CommonEagleNetModel<TerminalModel>> call, Response<CommonEagleNetModel<TerminalModel>> response) {
-//                if (!response.isSuccessful()) {
-//                    Log.d(TAG, "onResponse: " + response.message());
-//                    return;
-//                }
-//                CommonEagleNetModel<TerminalModel> model = response.body();
-//                if (model == null) {
-//                    return;
-//                }
-//                TerminalModel data = model.data;
-//                if (data == null) {
-//                    return;
-//                }
-//                String name = data.name;
-//                String serverId = data.sid;
-//                String terminalId = data.tid;
-//
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call<CommonEagleNetModel<TerminalModel>> call, Throwable t) {
-//
-//            }
-//        });
-//
-//    }
-//
-//    /**
-//     * 获取当前时间信息文本
-//     * 格式 ：20190503_174622
-//     * @return
-//     */
-//    private String getCurTimeInfo() {
-//        return "test";
-//    }
 
     private void startTrack(final long serverId) {
         // 先根据Terminal名称查询Terminal ID，如果Terminal还不存在，就尝试创建，拿到Terminal ID后，
@@ -481,6 +458,19 @@ public class NewCycleFragment extends MyLazyFragment {
         mCurrentStatus = STATUS_READY;
         mBtnDone.setVisibility(View.GONE);
         mBtnStartOrPause.setText("开始");
+
+        //检查值得合法性：isServiceRunning应该为true，isServiceRunning应该为true
+        if (!isServiceRunning || !isGatherRunning) {
+            // TODO: 2019/5/6 恢复成开始状态
+            isGatherRunning = false;
+            isServiceRunning = false;
+            return;
+        }
+
+        mAMapTrackClient.stopGather(onTrackListener);
+        if (serverId != 0L && terminalId != 0) {
+            mAMapTrackClient.stopTrack(new TrackParam(serverId, terminalId), onTrackListener);
+        }
     }
 
     @BindView(R.id.btn_done)
