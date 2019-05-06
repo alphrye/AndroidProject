@@ -11,7 +11,7 @@
         app:backButton="false"
         android:background="@color/color_main"
         app:titleColor="@color/white"
-        app:title="@string/home_nav_explore" />
+        app:title="@string/home_nav_map" />
 
     <android.support.design.widget.FloatingActionButton
         android:layout_margin="@dimen/space_32"
