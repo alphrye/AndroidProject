@@ -77,18 +77,6 @@
             android:layout_toLeftOf="@+id/btn_start_or_pause"
             android:visibility="gone"/>
 
-        <!--地图按钮-->
-        <ImageView
-            android:id="@+id/iv_map"
-            android:textColor="@color/white"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center"
-            android:src="@drawable/map_logo"
-            android:layout_toRightOf="@id/btn_start_or_pause"
-            android:layout_centerInParent="true"
-            android:layout_toEndOf="@id/btn_start_or_pause" />
-
         <TextView
             android:visibility="gone"
             android:id="@+id/tv_debug"

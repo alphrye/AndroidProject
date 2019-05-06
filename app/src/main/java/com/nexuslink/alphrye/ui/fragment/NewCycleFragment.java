@@ -199,13 +199,6 @@ public class NewCycleFragment extends MyLazyFragment {
         }
     };
 
-
-    @OnClick(R.id.iv_map)
-    void onMapOpen(View view) {
-        Intent intent = new Intent(getContext(), MapActivity.class);
-        startActivity(intent);
-    }
-
     @OnClick(R.id.btn_start_or_pause)
     void onStartOrPause(View view) {
         if (mCurrentStatus == STATUS_READY) {
