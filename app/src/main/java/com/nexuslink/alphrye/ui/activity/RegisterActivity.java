@@ -1,5 +1,6 @@
 package com.nexuslink.alphrye.ui.activity;
 
+import android.app.ProgressDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,8 +28,8 @@ public class RegisterActivity extends MyActivity
     @BindView(R.id.cv_register_countdown)
     CountdownView mCountdownView;
 
-    @BindView(R.id.et_register_code)
-    EditText mCodeView;
+//    @BindView(R.id.et_register_code)
+//    EditText mCodeView;
 
     @BindView(R.id.et_register_password1)
     EditText mPasswordView1;
@@ -64,7 +65,7 @@ public class RegisterActivity extends MyActivity
         mIvClose.setOnClickListener(this);
 
         mEditTextInputHelper = new EditTextInputHelper(mCommitView);
-        mEditTextInputHelper.addViews(mPhoneView, mCodeView, mPasswordView1, mPasswordView2);
+        mEditTextInputHelper.addViews(mPhoneView, mPasswordView1, mPasswordView2);
     }
 
     @Override
@@ -104,6 +105,19 @@ public class RegisterActivity extends MyActivity
                 toast(getResources().getString(R.string.two_password_input_error));
                 return;
             }
+
+            final ProgressDialog dialog = new ProgressDialog(this);
+            dialog.setMessage("注册中...");
+            dialog.show();
+            android.os.Handler handler = new android.os.Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    dialog.dismiss();
+                    finish();
+                    toast("注册成功，赶快去登录吧");
+                }
+            }, 1000);
         } else if (v == mTvBack || v == mIvClose) {
             finish();
         }

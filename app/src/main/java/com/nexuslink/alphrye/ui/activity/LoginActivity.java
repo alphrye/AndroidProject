@@ -1,5 +1,7 @@
 package com.nexuslink.alphrye.ui.activity;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -95,28 +97,41 @@ public class LoginActivity extends MyActivity
             if (mPhoneView.getText().toString().length() != 11) {
                 ToastUtils.show(getResources().getString(R.string.phone_input_error));
             }
+            final ProgressDialog dialog = new ProgressDialog(this);
+            dialog.setMessage("登录中...");
+            dialog.show();
+            android.os.Handler handler = new android.os.Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    dialog.dismiss();
+                    Intent intent = new Intent(getContext(), HomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, 1000);
         } else if (v == mLoginForgetView) {
             startActivity(HomeActivity.class);
         } else if (v == mTvRegister) {
-//            startActivity(RegisterActivity.class);
+            startActivity(RegisterActivity.class);
             //发起登录请求
-            RetrofitWrapper wrapper = RetrofitWrapper.getInstance();
-            wrapper.enqueue(wrapper.getCommonCall().login(), new RetrofitWrapper.CommonCallBack<ProfileModel>() {
-                @Override
-                public void onSuccess(ProfileModel response) {
-                    if (response == null) {
-                        //fail
-                        return;
-                    }
-                    startActivity(HomeActivity.class);
-                    //保存数据到Sp
-                }
-
-                @Override
-                public void onFail(String errorTips) {
-
-                }
-            });
+//            RetrofitWrapper wrapper = RetrofitWrapper.getInstance();
+//            wrapper.enqueue(wrapper.getCommonCall().login(), new RetrofitWrapper.CommonCallBack<ProfileModel>() {
+//                @Override
+//                public void onSuccess(ProfileModel response) {
+//                    if (response == null) {
+//                        //fail
+//                        return;
+//                    }
+//                    startActivity(HomeActivity.class);
+//                    //保存数据到Sp
+//                }
+//
+//                @Override
+//                public void onFail(String errorTips) {
+//
+//                }
+//            });
         }
     }
 }

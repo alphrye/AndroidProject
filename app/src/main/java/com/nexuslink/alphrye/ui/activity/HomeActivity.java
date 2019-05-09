@@ -67,7 +67,7 @@ public class HomeActivity extends MyActivity implements
 
         // 限制页面数量
         mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount());
-        mViewPager.setCurrentItem(PAGE_HOME_MAP);
+        mViewPager.setCurrentItem(PAGE_HOME_EXPLORE);
     }
 
     /**
