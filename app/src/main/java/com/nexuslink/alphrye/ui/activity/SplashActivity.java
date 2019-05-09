@@ -43,7 +43,7 @@ public class SplashActivity extends MyActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(getContext(), HomeActivity.class);
+                Intent intent = new Intent(getContext(), LoginActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -55,7 +55,7 @@ public class SplashActivity extends MyActivity {
         Calendar calendar = Calendar.getInstance();
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DATE);
-        String monthText = String.valueOf(month);
+        String monthText = String.valueOf(month + 1);
         String dayText = String.valueOf(day);
         mTvMonth.setText(month < 10 ? "0" + monthText : monthText);
         mTvDay.setText(day < 10 ? "0" + dayText : dayText);

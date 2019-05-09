@@ -90,12 +90,14 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/space_20"
                     android:text="@string/register_send_code"
-                    android:textColor="@color/colorAccent" />
+                    android:textColor="@color/colorAccent"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <View style="@style/HorizontalLineStyle" />
 
             <EditText
+                android:visibility="gone"
                 android:id="@+id/et_register_code"
                 style="@style/EditTextStyle"
                 android:layout_width="match_parent"
