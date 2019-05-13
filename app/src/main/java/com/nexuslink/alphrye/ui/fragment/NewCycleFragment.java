@@ -33,9 +33,7 @@ import com.amap.api.track.query.model.AddTrackRequest;
 import com.amap.api.track.query.model.AddTrackResponse;
 import com.amap.api.track.query.model.DistanceRequest;
 import com.amap.api.track.query.model.DistanceResponse;
-import com.amap.api.track.query.model.HistoryTrackRequest;
 import com.amap.api.track.query.model.HistoryTrackResponse;
-import com.amap.api.track.query.model.LatestPointRequest;
 import com.amap.api.track.query.model.LatestPointResponse;
 import com.amap.api.track.query.model.OnTrackListener;
 import com.amap.api.track.query.model.ParamErrorResponse;
@@ -63,6 +61,9 @@ import com.nexuslink.alphrye.ui.activity.HomeActivity;
 import com.nexuslink.alphrye.ui.weight.DashboardView;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import retrofit2.Call;
@@ -129,6 +130,10 @@ public class NewCycleFragment extends MyLazyFragment {
 
     private GnssStatus.Callback mGnssStatusCallback;
 
+    private Timer mQueryTimer;
+
+    private TimerTask queryTask;
+
     private OnTrackLifecycleListener onTrackListener = new SimpleOnTrackLifecycleListener() {
 
         @Override
@@ -184,6 +189,16 @@ public class NewCycleFragment extends MyLazyFragment {
             if (status == ErrorCode.TrackListen.START_GATHER_SUCEE) {
                 Toast.makeText(getContext(), "定位采集开启成功", Toast.LENGTH_SHORT).show();
                 isGatherRunning = true;
+
+                //开启猎鹰采集成功，开启定时器，执行定时查询任务
+                mQueryTimer = new Timer();
+                queryTask = new TimerTask() {
+                    @Override
+                    public void run() {
+                        queryClick();
+                    }
+                };
+                mQueryTimer.schedule(queryTask, 2000, 2000);
             } else if (status == ErrorCode.TrackListen.START_GATHER_ALREADY_STARTED) {
                 Toast.makeText(getContext(), "定位采集已经开启", Toast.LENGTH_SHORT).show();
                 isGatherRunning = true;
@@ -200,6 +215,7 @@ public class NewCycleFragment extends MyLazyFragment {
             if (status == ErrorCode.TrackListen.STOP_GATHER_SUCCE) {
                 Toast.makeText(getContext(), "定位采集停止成功", Toast.LENGTH_SHORT).show();
                 isGatherRunning = false;
+                mQueryTimer.cancel();
             } else {
                 Log.w(TAG, "error onStopGatherCallback, status: " + status + ", msg: " + msg);
                 Toast.makeText(getContext(),
@@ -505,7 +521,6 @@ public class NewCycleFragment extends MyLazyFragment {
         return criteria;
     }
 
-
     /**
      * 根据位置获取海拔信息
      * @param location
@@ -539,6 +554,28 @@ public class NewCycleFragment extends MyLazyFragment {
             MyLogUtil.d(TAG, "updateSpeedByLocation: speedAccuracyMetersPerSecond = " + speedAccuracyMetersPerSecond);
         }
         mDashboardView.updateSpeed(speed);
+    }
+
+    /**
+     * 更新距离查询
+     * @param distance
+     */
+    private void updateDistance(int distance) {
+        String distanceString = String.valueOf(distance);
+        SimpleModel modelDistance = modelList.get(POSITION_KM);
+        if (modelDistance instanceof  RunningDataModel) {
+            String curDistance = ((RunningDataModel) modelDistance).mData;
+            if (distanceString.equals(curDistance)) {
+                return;
+            }
+            ((RunningDataModel) modelDistance).mData = String.valueOf(distance);
+        }
+        SimpleModel modelCal = modelList.get(POSITION_CAL);
+        if (modelCal instanceof  RunningDataModel) {
+            // TODO: 2019/5/10 卡路里计算
+            ((RunningDataModel) modelCal).mData = String.valueOf(distance * 2);
+        }
+        mSimpleAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -704,7 +741,7 @@ public class NewCycleFragment extends MyLazyFragment {
      * @return
      */
     private String getUserId() {
-        return "user_1";
+        return "user_2";
     }
 
     /**
@@ -736,7 +773,14 @@ public class NewCycleFragment extends MyLazyFragment {
 
             @Override
             public void onDistanceCallback(DistanceResponse distanceResponse) {
-
+                if (distanceResponse.isSuccess()) {
+                    double meters = distanceResponse.getDistance();
+                    // 行驶里程查询成功，行驶了meters米
+                    Log.d(TAG, "onDistanceCallback: " + meters);
+                    updateDistance((int) meters);
+                } else {
+                    // 行驶里程查询失败
+                }
             }
 
             @Override
@@ -783,22 +827,22 @@ public class NewCycleFragment extends MyLazyFragment {
         DistanceRequest distanceRequest = new DistanceRequest(serverId, terminalId, cur - 1 * 60 * 60 * 1000, cur, -1);
         mAMapTrackClient.queryDistance(distanceRequest, trackListener);
 
-        mAMapTrackClient.queryLatestPoint(new LatestPointRequest(serverId, terminalId), trackListener);
-
-        HistoryTrackRequest historyTrackRequest = new HistoryTrackRequest(
-                serverId,
-                terminalId,
-                System.currentTimeMillis() - 12 * 60 * 60 * 1000,
-                System.currentTimeMillis(),
-                0,      // 不绑路
-                0,      // 不做距离补偿
-                5000,   // 距离补偿阈值，只有超过5km的点才启用距离补偿
-                0,  // 由旧到新排序
-                1,  // 返回第1页数据
-                100,    // 一页不超过100条
-                ""  // 暂未实现，该参数无意义，请留空
-        );
-        mAMapTrackClient.queryHistoryTrack(historyTrackRequest, trackListener);
+//        mAMapTrackClient.queryLatestPoint(new LatestPointRequest(serverId, terminalId), trackListener);
+//
+//        HistoryTrackRequest historyTrackRequest = new HistoryTrackRequest(
+//                serverId,
+//                terminalId,
+//                System.currentTimeMillis() - 12 * 60 * 60 * 1000,
+//                System.currentTimeMillis(),
+//                0,      // 不绑路
+//                0,      // 不做距离补偿
+//                5000,   // 距离补偿阈值，只有超过5km的点才启用距离补偿
+//                0,  // 由旧到新排序
+//                1,  // 返回第1页数据
+//                100,    // 一页不超过100条
+//                ""  // 暂未实现，该参数无意义，请留空
+//        );
+//        mAMapTrackClient.queryHistoryTrack(historyTrackRequest, trackListener);
 
 //        QueryTrackRequest queryTrackRequest = new QueryTrackRequest(
 //                serverId,
