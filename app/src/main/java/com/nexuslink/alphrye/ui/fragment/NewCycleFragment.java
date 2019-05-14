@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.GnssStatus;
 import android.location.Location;
@@ -14,11 +15,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.amap.api.track.AMapTrackClient;
@@ -116,6 +119,8 @@ public class NewCycleFragment extends MyLazyFragment {
     private long trackId;
 
     private long serverId;
+
+    private long recordTime;
 
     private boolean isServiceRunning;
 
@@ -243,6 +248,9 @@ public class NewCycleFragment extends MyLazyFragment {
     @BindView(R.id.v_dash_board)
     DashboardView mDashboardView;
 
+    @BindView(R.id.v_chronometer)
+    Chronometer mChronometer;
+
     @OnClick(R.id.btn_start_or_pause)
     void onStartOrPause() {
         if (mCurrentStatus == STATUS_READY) {
@@ -278,7 +286,7 @@ public class NewCycleFragment extends MyLazyFragment {
         modelList.add(POSITION_KM, new RunningDataModel("里程(KM)", "0"));
         modelList.add(POSITION_CAL, new RunningDataModel("热量(卡路里)", "0"));
         modelList.add(POSITION_ALTITUDE, new RunningDataModel("实时海拔(M)", "0"));
-        modelList.add(POSITION_TIME, new RunningTimeModel("骑行时间(秒)"));
+        modelList.add(POSITION_TIME, new RunningDataModel("电池电量", "0"));
 
         mSimpleAdapter = new SimpleAdapter.Builder(getContext())
                 .recyclerView(mRecyclerView)
@@ -296,6 +304,8 @@ public class NewCycleFragment extends MyLazyFragment {
     protected void initData() {
         mAMapTrackClient = new AMapTrackClient(MyApplication.getContext());
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Typeface typeface = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "lcd_num.ttf");
+        mChronometer.setTypeface(typeface);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             mGnssStatusCallback = new GnssStatus.Callback() {
@@ -412,7 +422,9 @@ public class NewCycleFragment extends MyLazyFragment {
             return;
         }
 
-        mSimpleAdapter.notifyItemChanged(POSITION_TIME, FLAG_TIME_START);
+        mChronometer.setBase(SystemClock.elapsedRealtime() - recordTime);
+        mChronometer.start();
+//        mSimpleAdapter.notifyItemChanged(POSITION_TIME, FLAG_TIME_START);
 
         //本地检查服务是否开启
         if (!isServiceRunning) {
@@ -427,7 +439,9 @@ public class NewCycleFragment extends MyLazyFragment {
     private void onRidePauseClick() {
         mCurrentStatus = STATUS_PAUSE;
         mBtnStartOrPause.setText("继续");
-        mSimpleAdapter.notifyItemChanged(POSITION_TIME, FLAG_TIME_PAUSE);
+        mChronometer.stop();
+        recordTime = SystemClock.elapsedRealtime() - mChronometer.getBase();
+//        mSimpleAdapter.notifyItemChanged(POSITION_TIME, FLAG_TIME_PAUSE);
 
         //检查值得合法性：isServiceRunning应该为true，isGatherRunning应该为true
         if (!isServiceRunning
@@ -447,7 +461,9 @@ public class NewCycleFragment extends MyLazyFragment {
     private void onRideContinueClick() {
         mCurrentStatus = STATUS_RUNNING;
         mBtnStartOrPause.setText("暂停");
-        mSimpleAdapter.notifyItemChanged(POSITION_TIME, FLAG_TIME_CONTINUE);
+        mChronometer.setBase(SystemClock.elapsedRealtime() - recordTime);
+        mChronometer.start();
+//        mSimpleAdapter.notifyItemChanged(POSITION_TIME, FLAG_TIME_CONTINUE);
 
         //检查值得合法性：isServiceRunning应该为true，isGatherRunning应该为false
         if (!isServiceRunning || isGatherRunning) {
@@ -473,6 +489,8 @@ public class NewCycleFragment extends MyLazyFragment {
         mCurrentStatus = STATUS_READY;
         mBtnDone.setVisibility(View.GONE);
         mBtnStartOrPause.setText("开始");
+        recordTime = 0;
+        mChronometer.setBase(SystemClock.elapsedRealtime());
 
         //检查值得合法性：isServiceRunning应该为true，isServiceRunning应该为true
         if (!isServiceRunning || !isGatherRunning) {
