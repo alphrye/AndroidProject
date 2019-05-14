@@ -25,8 +25,9 @@ import com.amap.api.track.AMapTrackClient;
 import com.amap.api.track.ErrorCode;
 import com.amap.api.track.OnTrackLifecycleListener;
 import com.amap.api.track.TrackParam;
-import com.amap.api.track.query.entity.HistoryTrack;
+import com.amap.api.track.query.entity.DriveMode;
 import com.amap.api.track.query.entity.Point;
+import com.amap.api.track.query.entity.Track;
 import com.amap.api.track.query.model.AddTerminalRequest;
 import com.amap.api.track.query.model.AddTerminalResponse;
 import com.amap.api.track.query.model.AddTrackRequest;
@@ -39,6 +40,7 @@ import com.amap.api.track.query.model.OnTrackListener;
 import com.amap.api.track.query.model.ParamErrorResponse;
 import com.amap.api.track.query.model.QueryTerminalRequest;
 import com.amap.api.track.query.model.QueryTerminalResponse;
+import com.amap.api.track.query.model.QueryTrackRequest;
 import com.amap.api.track.query.model.QueryTrackResponse;
 import com.nexuslink.alphrye.SimpleAdapter;
 import com.nexuslink.alphrye.SimpleModel;
@@ -118,8 +120,6 @@ public class NewCycleFragment extends MyLazyFragment {
 
     private boolean isGatherRunning;
 
-    private boolean uploadToTrack;
-
     private SimpleAdapter mSimpleAdapter;
 
     private List<SimpleModel> modelList;
@@ -148,6 +148,7 @@ public class NewCycleFragment extends MyLazyFragment {
                 Toast.makeText(getContext(), "启动服务成功", Toast.LENGTH_SHORT).show();
                 isServiceRunning = true;
                 if (!isGatherRunning) {
+                    Log.d(TAG, "onStartTrackCallback 1 : trackId = " + trackId);
                     mAMapTrackClient.setTrackId(trackId);
                     mAMapTrackClient.startGather(onTrackListener);
                 }
@@ -157,6 +158,7 @@ public class NewCycleFragment extends MyLazyFragment {
                 isServiceRunning = true;
 
                 if (!isGatherRunning) {
+                    Log.d(TAG, "onStartTrackCallback 2 : trackId = " + trackId);
                     mAMapTrackClient.setTrackId(trackId);
                     mAMapTrackClient.startGather(onTrackListener);
                 }
@@ -454,8 +456,13 @@ public class NewCycleFragment extends MyLazyFragment {
             return;
         }
         //继续开始收集(根据trackId判断是否为同一记录)
-        mAMapTrackClient.setTrackId(trackId);
-        mAMapTrackClient.startGather(onTrackListener);
+        long curTrackId = mAMapTrackClient.getTrackId();
+        //简单的校验
+        if (curTrackId == trackId) {
+            mAMapTrackClient.setTrackId(trackId);
+            Log.d(TAG, "onRideContinueClick: trackId = " + trackId);
+            mAMapTrackClient.startGather(onTrackListener);
+        }
     }
 
     /**
@@ -686,31 +693,7 @@ public class NewCycleFragment extends MyLazyFragment {
                     if (queryTerminalResponse.isTerminalExist()) {
                         // 当前终端已经创建过，直接使用查询到的terminal id
                         terminalId = queryTerminalResponse.getTid();
-                        if (uploadToTrack) {
-                            mAMapTrackClient.addTrack(new AddTrackRequest(serverId, terminalId), new SimpleOnTrackListener() {
-                                @Override
-                                public void onAddTrackCallback(AddTrackResponse addTrackResponse) {
-                                    if (addTrackResponse.isSuccess()) {
-                                        // trackId需要在启动服务后设置才能生效，因此这里不设置，而是在startGather之前设置了track id
-                                        trackId = addTrackResponse.getTrid();
-                                        TrackParam trackParam = new TrackParam(serverId, terminalId);
-                                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                            trackParam.setNotification(createNotification());
-                                        }
-                                        mAMapTrackClient.startTrack(trackParam, onTrackListener);
-                                    } else {
-                                        Toast.makeText(getContext(), "网络请求失败，" + addTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        } else {
-                            // 不指定track id，上报的轨迹点是该终端的散点轨迹
-                            TrackParam trackParam = new TrackParam(serverId, terminalId);
-                            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                trackParam.setNotification(createNotification());
-                            }
-                            mAMapTrackClient.startTrack(trackParam, onTrackListener);
-                        }
+                        addTrack();
                     } else {
                         // 当前终端是新终端，还未创建过，创建该终端并使用新生成的terminal id
                         mAMapTrackClient.addTerminal(new AddTerminalRequest(CommonConstance.TERMINAL_HEAD, serverId), new SimpleOnTrackListener() {
@@ -718,11 +701,7 @@ public class NewCycleFragment extends MyLazyFragment {
                             public void onCreateTerminalCallback(AddTerminalResponse addTerminalResponse) {
                                 if (addTerminalResponse.isSuccess()) {
                                     terminalId = addTerminalResponse.getTid();
-                                    TrackParam trackParam = new TrackParam(serverId, terminalId);
-                                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        trackParam.setNotification(createNotification());
-                                    }
-                                    mAMapTrackClient.startTrack(trackParam, onTrackListener);
+                                    addTrack();
                                 } else {
                                     Toast.makeText(getContext(), "网络请求失败，" + addTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
                                 }
@@ -737,11 +716,33 @@ public class NewCycleFragment extends MyLazyFragment {
     }
 
     /**
+     * 添加新轨迹
+     */
+    private void addTrack() {
+        mAMapTrackClient.addTrack(new AddTrackRequest(serverId, terminalId), new SimpleOnTrackListener() {
+            @Override
+            public void onAddTrackCallback(AddTrackResponse addTrackResponse) {
+                if (addTrackResponse.isSuccess()) {
+                    // trackId需要在启动服务后设置才能生效，因此这里不设置，而是在startGather之前设置了track id
+                    trackId = addTrackResponse.getTrid();
+                    TrackParam trackParam = new TrackParam(serverId, terminalId);
+                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        trackParam.setNotification(createNotification());
+                    }
+                    mAMapTrackClient.startTrack(trackParam, onTrackListener);
+                } else {
+                    Toast.makeText(getContext(), "网络请求失败，" + addTrackResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    /**
      * 获取用户id
      * @return
      */
     private String getUserId() {
-        return "user_2";
+        return "user_4";
     }
 
     /**
@@ -795,22 +796,25 @@ public class NewCycleFragment extends MyLazyFragment {
 
             @Override
             public void onHistoryTrackCallback(HistoryTrackResponse historyTrackResponse) {
-                if (historyTrackResponse.isSuccess()) {
-                    HistoryTrack historyTrack = historyTrackResponse.getHistoryTrack();
-                    // historyTrack中包含终端轨迹信息
-                } else {
-                    // 查询失败
-                }
+
             }
 
             @Override
             public void onQueryTrackCallback(QueryTrackResponse queryTrackResponse) {
-//                if (queryTrackResponse.isSuccess()) {
-//                    List<Track> tracks =  queryTrackResponse.getTracks();
-//                    // 查询成功，tracks包含所有轨迹及相关轨迹点信息
-//                } else {
-//                    // 查询失败
-//                }
+                if (queryTrackResponse.isSuccess()) {
+                    List<Track> tracks =  queryTrackResponse.getTracks();
+                    if (tracks != null) {
+                        Log.d(TAG, "onQueryTrackCallback: size = " + tracks.size());
+                        for (int i = 0; i < tracks.size(); i++) {
+                            Track curTrack = tracks.get(i);
+                            Log.d(TAG, "onQueryTrackCallback: " + i + ": distance = " + curTrack.getDistance() + " id =" +
+                                    "" + curTrack.getTrid());
+                        }
+                    }
+                    // 查询成功，tracks包含所有轨迹及相关轨迹点信息
+                } else {
+                    // 查询失败
+                }
             }
 
             @Override
@@ -827,40 +831,23 @@ public class NewCycleFragment extends MyLazyFragment {
         DistanceRequest distanceRequest = new DistanceRequest(serverId, terminalId, cur - 1 * 60 * 60 * 1000, cur, -1);
         mAMapTrackClient.queryDistance(distanceRequest, trackListener);
 
-//        mAMapTrackClient.queryLatestPoint(new LatestPointRequest(serverId, terminalId), trackListener);
-//
-//        HistoryTrackRequest historyTrackRequest = new HistoryTrackRequest(
-//                serverId,
-//                terminalId,
-//                System.currentTimeMillis() - 12 * 60 * 60 * 1000,
-//                System.currentTimeMillis(),
-//                0,      // 不绑路
-//                0,      // 不做距离补偿
-//                5000,   // 距离补偿阈值，只有超过5km的点才启用距离补偿
-//                0,  // 由旧到新排序
-//                1,  // 返回第1页数据
-//                100,    // 一页不超过100条
-//                ""  // 暂未实现，该参数无意义，请留空
-//        );
-//        mAMapTrackClient.queryHistoryTrack(historyTrackRequest, trackListener);
+        QueryTrackRequest queryTrackRequest = new QueryTrackRequest(
+                serverId,
+                terminalId,
+                -1,	// 轨迹id，传-1表示查询所有轨迹
+                System.currentTimeMillis() - 12 * 60 * 60 * 1000,
+                System.currentTimeMillis(),
+                0,      // 不启用去噪
+                1,   // 绑路
+                0,      // 不进行精度过滤
+                DriveMode.DRIVING,  // 当前仅支持驾车模式
+                1,     // 距离补偿
+                5000,   // 距离补偿，只有超过5km的点才启用距离补偿
+                1,  // 结果应该包含轨迹点信息
+                1,  // 返回第1页数据，由于未指定轨迹，分页将失效
+                100    // 一页不超过100条
+        );
 
-//        QueryTrackRequest queryTrackRequest = new QueryTrackRequest(
-//                serverId,
-//                terminalId,
-//                -1,	// 轨迹id，传-1表示查询所有轨迹
-//                System.currentTimeMillis() - 12 * 60 * 60 * 1000,
-//                System.currentTimeMillis(),
-//                0,      // 不启用去噪
-//                1,   // 绑路
-//                0,      // 不进行精度过滤
-//                DriveMode.DRIVING,  // 当前仅支持驾车模式
-//                1,     // 距离补偿
-//                5000,   // 距离补偿，只有超过5km的点才启用距离补偿
-//                1,  // 结果应该包含轨迹点信息
-//                1,  // 返回第1页数据，由于未指定轨迹，分页将失效
-//                100    // 一页不超过100条
-//        );
-//
-//        mAMapTrackClient.queryTerminalTrack(queryTrackRequest, trackListener);
+        mAMapTrackClient.queryTerminalTrack(queryTrackRequest, trackListener);
     }
 }
