@@ -94,7 +94,10 @@ public class ProfileFragment extends MyLazyFragment implements SimpleAdapter.OnI
                     List<SimpleModel> data = new ArrayList<>();
                     for (int i = 0; i < tracks.size(); i++) {
                         Track curTrack = tracks.get(i);
-                        data.add(new RideHistoryModel());
+                        if (curTrack == null) {
+                            continue;
+                        }
+                        data.add(new RideHistoryModel(curTrack));
                         Log.d(TAG, "onQueryTrackCallback: " + i + ": distance = " + curTrack.getDistance() + " id =" +
                                 "" + curTrack.getTrid());
                     }

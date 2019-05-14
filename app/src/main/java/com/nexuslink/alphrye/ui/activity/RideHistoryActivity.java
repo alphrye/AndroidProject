@@ -40,19 +40,9 @@ public class RideHistoryActivity extends MyActivity implements SimpleAdapter.OnI
     @Override
     protected void initView() {
         //测试数据
-        List<SimpleModel> rideHistoryModels = new ArrayList<>();
-        rideHistoryModels.add(new RideHistoryModel());
-        rideHistoryModels.add(new RideHistoryModel());
-        rideHistoryModels.add(new RideHistoryModel());
-        rideHistoryModels.add(new RideHistoryModel());
-        rideHistoryModels.add(new RideHistoryModel());
-        rideHistoryModels.add(new RideHistoryModel());
-        rideHistoryModels.add(new RideHistoryModel());
-        rideHistoryModels.add(new RideHistoryModel());
         mSimpleAdapter = new SimpleAdapter.Builder(this)
                 .recyclerView(mRecyclerView)
                 .itemClickListener(this)
-                .data(rideHistoryModels)
                 .build();
     }
 
