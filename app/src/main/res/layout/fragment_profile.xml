@@ -14,7 +14,8 @@
         app:backButton="false"
         app:title="@string/home_nav_profile"
         app:titleColor="@color/white"
-        app:lineColor="@color/color_24252B"/>
+        app:lineColor="@color/color_24252B"
+        app:rightIcon="@drawable/setting"/>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -145,108 +146,11 @@
 
             </RelativeLayout>
 
-            <!--骑行记录-->
-            <LinearLayout
-                android:id="@+id/ll_ride_history"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/v_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/color_333333"
-                    android:drawableRight="@mipmap/icon_my_more"
-                    android:text="骑行记录"/>
-
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLine" />
-
-            </LinearLayout>
-
-            <!--我的动态-->
-            <LinearLayout
-                android:id="@+id/ll_my_explore"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:padding="16dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/color_333333"
-                    android:drawableRight="@mipmap/icon_my_more"
-                    android:text="我的动态" />
-
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLine" />
-
-            </LinearLayout>
-
-            <!--关于-->
-            <LinearLayout
-                android:id="@+id/ll_about"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:padding="16dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/color_333333"
-                    android:drawableRight="@mipmap/icon_my_more"
-                    android:text="关于" />
-
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLine" />
-
-            </LinearLayout>
-
-            <!--设置-->
-            <LinearLayout
-                android:id="@+id/ll_setting"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@color/white"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:textSize="16sp"
-                    android:textColor="@color/color_333333"
-                    android:drawableRight="@mipmap/icon_my_more"
-                    android:text="设置" />
-
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:background="@color/colorLine" />
-
-            </LinearLayout>
+                android:layout_height="match_parent">
+            </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
 
