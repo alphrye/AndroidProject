@@ -50,6 +50,7 @@ import com.nexuslink.alphrye.common.MyApplication;
 import com.nexuslink.alphrye.common.MyLazyFragment;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.helper.MyLogUtil;
+import com.nexuslink.alphrye.helper.SPUtil;
 import com.nexuslink.alphrye.helper.SimpleOnTrackLifecycleListener;
 import com.nexuslink.alphrye.helper.SimpleOnTrackListener;
 import com.nexuslink.alphrye.model.CommonEagleNetModel;
@@ -627,6 +628,7 @@ public class NewCycleFragment extends MyLazyFragment {
                 if (targetServerModel != null) {
                     //service已经创建
                     serverId = targetServerModel.sid;
+                    SPUtil.putLong(CommonConstance.SP_SERVER_ID, serverId);
                     startTrack();
                 } else {
                     //Service没有创建
@@ -670,6 +672,7 @@ public class NewCycleFragment extends MyLazyFragment {
                             return;
                         }
                         serverId = data.sid;
+                        SPUtil.putLong(CommonConstance.SP_SERVER_ID, serverId);
                         startTrack();
                     }
 
@@ -693,6 +696,7 @@ public class NewCycleFragment extends MyLazyFragment {
                     if (queryTerminalResponse.isTerminalExist()) {
                         // 当前终端已经创建过，直接使用查询到的terminal id
                         terminalId = queryTerminalResponse.getTid();
+                        SPUtil.putLong(CommonConstance.SP_TERMINAL_ID, terminalId);
                         addTrack();
                     } else {
                         // 当前终端是新终端，还未创建过，创建该终端并使用新生成的terminal id
@@ -701,6 +705,7 @@ public class NewCycleFragment extends MyLazyFragment {
                             public void onCreateTerminalCallback(AddTerminalResponse addTerminalResponse) {
                                 if (addTerminalResponse.isSuccess()) {
                                     terminalId = addTerminalResponse.getTid();
+                                    SPUtil.putLong(CommonConstance.SP_TERMINAL_ID, terminalId);
                                     addTrack();
                                 } else {
                                     Toast.makeText(getContext(), "网络请求失败，" + addTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
@@ -830,24 +835,5 @@ public class NewCycleFragment extends MyLazyFragment {
         long cur = System.currentTimeMillis();
         DistanceRequest distanceRequest = new DistanceRequest(serverId, terminalId, cur - 1 * 60 * 60 * 1000, cur, -1);
         mAMapTrackClient.queryDistance(distanceRequest, trackListener);
-
-        QueryTrackRequest queryTrackRequest = new QueryTrackRequest(
-                serverId,
-                terminalId,
-                -1,	// 轨迹id，传-1表示查询所有轨迹
-                System.currentTimeMillis() - 12 * 60 * 60 * 1000,
-                System.currentTimeMillis(),
-                0,      // 不启用去噪
-                1,   // 绑路
-                0,      // 不进行精度过滤
-                DriveMode.DRIVING,  // 当前仅支持驾车模式
-                1,     // 距离补偿
-                5000,   // 距离补偿，只有超过5km的点才启用距离补偿
-                1,  // 结果应该包含轨迹点信息
-                1,  // 返回第1页数据，由于未指定轨迹，分页将失效
-                100    // 一页不超过100条
-        );
-
-        mAMapTrackClient.queryTerminalTrack(queryTrackRequest, trackListener);
     }
 }

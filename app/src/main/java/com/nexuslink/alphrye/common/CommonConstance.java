@@ -11,4 +11,7 @@ public interface CommonConstance {
     // TODO: 2019/5/4 与业务绑定
     String TERMINAL_HEAD = "Terminal_debug";
     String SERVICE_HEAD = "Service_";
+
+    String SP_TERMINAL_ID = "TERMINAL_ID";
+    String SP_SERVER_ID = "SERVER_ID";
 }
