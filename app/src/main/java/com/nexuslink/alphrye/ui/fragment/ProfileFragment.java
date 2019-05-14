@@ -1,14 +1,20 @@
 package com.nexuslink.alphrye.ui.fragment;
 
+import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.LinearLayout;
 
+import com.hjq.bar.OnTitleBarListener;
+import com.hjq.bar.TitleBar;
+import com.nexuslink.alphrye.SimpleAdapter;
+import com.nexuslink.alphrye.SimpleModel;
 import com.nexuslink.alphrye.common.MyLazyFragment;
 import com.nexuslink.alphrye.cyctastic.R;
-import com.nexuslink.alphrye.ui.activity.MyAboutActivity;
-import com.nexuslink.alphrye.ui.activity.MyExploreActivity;
-import com.nexuslink.alphrye.ui.activity.RideHistoryActivity;
+import com.nexuslink.alphrye.model.RideHistoryModel;
 import com.nexuslink.alphrye.ui.activity.SettingActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -17,15 +23,14 @@ import butterknife.BindView;
  *    time   : 2018/12/28
  *    desc   : 个人页面
  */
-public class ProfileFragment extends MyLazyFragment implements View.OnClickListener {
-    @BindView(R.id.ll_ride_history)
-    LinearLayout mLlRideHistory;
-    @BindView(R.id.ll_my_explore)
-    LinearLayout mLlMyExplore;
-    @BindView(R.id.ll_about)
-    LinearLayout mLlAbout;
-    @BindView(R.id.ll_setting)
-    LinearLayout mLlSetting;
+public class ProfileFragment extends MyLazyFragment implements SimpleAdapter.OnItemClickListener, OnTitleBarListener {
+    private SimpleAdapter mSimpleAdapter;
+
+    @BindView(R.id.v_recycler)
+    RecyclerView mRecyclerView;
+
+    @BindView(R.id.tb_profile_title)
+    TitleBar mTitleBar;
 
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
@@ -43,10 +48,24 @@ public class ProfileFragment extends MyLazyFragment implements View.OnClickListe
 
     @Override
     protected void initView() {
-        mLlRideHistory.setOnClickListener(this);
-        mLlMyExplore.setOnClickListener(this);
-        mLlAbout.setOnClickListener(this);
-        mLlSetting.setOnClickListener(this);
+
+        //测试数据
+        List<SimpleModel> rideHistoryModels = new ArrayList<>();
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        rideHistoryModels.add(new RideHistoryModel());
+        mSimpleAdapter = new SimpleAdapter.Builder(getContext())
+                .recyclerView(mRecyclerView)
+                .itemClickListener(this)
+                .data(rideHistoryModels)
+                .build();
+
+        mTitleBar.setOnTitleBarListener(this);
     }
 
     @Override
@@ -55,21 +74,29 @@ public class ProfileFragment extends MyLazyFragment implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View v) {
-        if (v == mLlRideHistory) {
-            startActivity(RideHistoryActivity.class);
-        } else if (v == mLlMyExplore) {
-            startActivity(MyExploreActivity.class);
-        } else if (v == mLlAbout) {
-            startActivity(MyAboutActivity.class);
-        } else if (v == mLlSetting) {
-            startActivity(SettingActivity.class);
-        }
-    }
-
-    @Override
     public boolean isStatusBarEnabled() {
         // 使用沉浸式状态栏
         return !super.isStatusBarEnabled();
+    }
+
+    @Override
+    public void onItemClick(View v, SimpleModel model, int position) {
+
+    }
+
+    @Override
+    public void onLeftClick(View v) {
+
+    }
+
+    @Override
+    public void onTitleClick(View v) {
+
+    }
+
+    @Override
+    public void onRightClick(View v) {
+        Intent intent = new Intent(getContext(), SettingActivity.class);
+        startActivity(intent);
     }
 }
