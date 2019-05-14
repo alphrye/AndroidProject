@@ -7,9 +7,6 @@ import com.hjq.base.BaseFragmentAdapter;
 import com.nexuslink.alphrye.common.MyLazyFragment;
 import com.nexuslink.alphrye.ui.fragment.MapFragment;
 import com.nexuslink.alphrye.ui.fragment.NewCycleFragment;
-import com.nexuslink.alphrye.ui.fragment.TestFragmentD;
-import com.nexuslink.alphrye.ui.fragment.CycleFragment;
-import com.nexuslink.alphrye.ui.fragment.ExploreFragment;
 import com.nexuslink.alphrye.ui.fragment.ProfileFragment;
 
 import java.util.List;
@@ -21,6 +18,7 @@ import java.util.List;
  *    desc   : 主页界面 ViewPager + Fragment 适配器
  */
 public final class HomeFragmentAdapter extends BaseFragmentAdapter<MyLazyFragment> {
+    private List<MyLazyFragment> mFragmentList;
 
     public HomeFragmentAdapter(FragmentActivity activity) {
         super(activity);
@@ -32,5 +30,10 @@ public final class HomeFragmentAdapter extends BaseFragmentAdapter<MyLazyFragmen
         list.add(MapFragment.newInstance());
         list.add(NewCycleFragment.newInstance());
         list.add(ProfileFragment.newInstance());
+        mFragmentList = list;
+    }
+
+    public List<MyLazyFragment> getFragmentList() {
+        return mFragmentList;
     }
 }

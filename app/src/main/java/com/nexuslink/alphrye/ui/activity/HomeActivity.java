@@ -10,10 +10,12 @@ import android.view.MenuItem;
 
 import com.amap.api.services.help.Tip;
 import com.nexuslink.alphrye.common.MyActivity;
+import com.nexuslink.alphrye.common.MyLazyFragment;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.helper.ActivityStackManager;
 import com.nexuslink.alphrye.helper.DoubleClickHelper;
 import com.nexuslink.alphrye.ui.adapter.HomeFragmentAdapter;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -33,6 +35,7 @@ public class HomeActivity extends MyActivity implements
 
     public static final int PAGE_HOME_PROFILE = 2;
 
+    public static final String TAG = "HomeActivity";
 
     @BindView(R.id.vp_home_pager)
     ViewPager mViewPager;
@@ -79,15 +82,29 @@ public class HomeActivity extends MyActivity implements
 
     @Override
     public void onPageSelected(int position) {
+        List<MyLazyFragment> fragmentList = mPagerAdapter.getFragmentList();
+        if (fragmentList == null) {
+            return;
+        }
+        if (position < fragmentList.size()) {
+            MyLazyFragment fragment = fragmentList.get(position);
+            if (fragment == null) {
+                return;
+            }
+            fragment.onPageSelect();
+        }
         switch (position) {
             case PAGE_HOME_EXPLORE:
                 mBottomNavigationView.setSelectedItemId(R.id.home_explore);
+                Log.d(TAG, "onPageSelected: home_explore");
                 break;
             case PAGE_HOME_MAP:
                 mBottomNavigationView.setSelectedItemId(R.id.home_cycle);
+                Log.d(TAG, "onPageSelected: home_cycle");
                 break;
             case PAGE_HOME_PROFILE:
                 mBottomNavigationView.setSelectedItemId(R.id.home_profile);
+                Log.d(TAG, "onPageSelected: home_profile");
                 break;
         }
     }

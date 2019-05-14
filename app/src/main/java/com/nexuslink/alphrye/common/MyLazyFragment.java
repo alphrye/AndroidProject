@@ -63,4 +63,11 @@ public abstract class MyLazyFragment extends UILazyFragment {
     public void toast(Object object) {
         ToastUtils.show(object);
     }
+
+    /**
+     * 选中回调，选择性重写
+     */
+    public void onPageSelect() {
+
+    }
 }
