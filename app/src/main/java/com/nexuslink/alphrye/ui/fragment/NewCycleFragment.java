@@ -491,6 +491,7 @@ public class NewCycleFragment extends MyLazyFragment {
         mBtnStartOrPause.setText("开始");
         recordTime = 0;
         mChronometer.setBase(SystemClock.elapsedRealtime());
+        mChronometer.stop();
 
         //检查值得合法性：isServiceRunning应该为true，isServiceRunning应该为true
         if (!isServiceRunning || !isGatherRunning) {
