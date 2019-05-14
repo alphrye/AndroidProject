@@ -27,8 +27,9 @@ public class RideHistoryItem extends SimpleItem<RideHistoryModel> {
            double distance = track.getDistance();
            long time = track.getTime();
 
-           ((ViewHolder) viewHolder).mTvDistance.setText("总里程：" + distance + "m");
-           ((ViewHolder) viewHolder).mTvTrackId.setText("轨迹编号：" + trackId);
+           ((ViewHolder) viewHolder).mTvDistance.setText("骑行总里程：" + distance + "m");
+           ((ViewHolder) viewHolder).mTvTrackId.setText("骑行轨迹编号：" + trackId);
+           ((ViewHolder) viewHolder).mTime.setText("骑行时间：" + time);
         }
     }
 
@@ -38,10 +39,13 @@ public class RideHistoryItem extends SimpleItem<RideHistoryModel> {
 
         public TextView mTvTrackId;
 
+        public TextView mTime;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mTvDistance = itemView.findViewById(R.id.distance);
             mTvTrackId = itemView.findViewById(R.id.trackId);
+            mTime = itemView.findViewById(R.id.time);
         }
     }
 }
