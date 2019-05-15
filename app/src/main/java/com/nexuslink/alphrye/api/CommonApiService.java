@@ -9,7 +9,10 @@ import com.nexuslink.alphrye.net.bean.UserBean;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 
 /**
  *    author : alphrye
@@ -31,4 +34,8 @@ public interface CommonApiService {
 
     @GET("/v1/login/")
     Call<CommonNetBean<ProfileModel>> login();
+
+    @POST("/register/")
+    @FormUrlEncoded
+    Call<CommonNetBean> register(@Field("name") String name, @Field("password") String password);
 }
