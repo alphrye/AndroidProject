@@ -5,16 +5,21 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.GnssStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -28,7 +33,6 @@ import com.amap.api.track.AMapTrackClient;
 import com.amap.api.track.ErrorCode;
 import com.amap.api.track.OnTrackLifecycleListener;
 import com.amap.api.track.TrackParam;
-import com.amap.api.track.query.entity.DriveMode;
 import com.amap.api.track.query.entity.Point;
 import com.amap.api.track.query.entity.Track;
 import com.amap.api.track.query.model.AddTerminalRequest;
@@ -43,11 +47,11 @@ import com.amap.api.track.query.model.OnTrackListener;
 import com.amap.api.track.query.model.ParamErrorResponse;
 import com.amap.api.track.query.model.QueryTerminalRequest;
 import com.amap.api.track.query.model.QueryTerminalResponse;
-import com.amap.api.track.query.model.QueryTrackRequest;
 import com.amap.api.track.query.model.QueryTrackResponse;
 import com.nexuslink.alphrye.SimpleAdapter;
 import com.nexuslink.alphrye.SimpleModel;
 import com.nexuslink.alphrye.api.EagleApiService;
+import com.nexuslink.alphrye.api.HeWeatherApiService;
 import com.nexuslink.alphrye.common.CommonConstance;
 import com.nexuslink.alphrye.common.MyApplication;
 import com.nexuslink.alphrye.common.MyLazyFragment;
@@ -58,14 +62,17 @@ import com.nexuslink.alphrye.helper.SimpleOnTrackLifecycleListener;
 import com.nexuslink.alphrye.helper.SimpleOnTrackListener;
 import com.nexuslink.alphrye.model.CommonEagleNetModel;
 import com.nexuslink.alphrye.model.FullServerModel;
+import com.nexuslink.alphrye.model.HeWeatherModel;
 import com.nexuslink.alphrye.model.RunningDataModel;
-import com.nexuslink.alphrye.model.RunningTimeModel;
 import com.nexuslink.alphrye.model.ServerListModel;
 import com.nexuslink.alphrye.model.SimpleServerModel;
 import com.nexuslink.alphrye.net.wrapper.RetrofitWrapper;
 import com.nexuslink.alphrye.ui.activity.HomeActivity;
 import com.nexuslink.alphrye.ui.weight.DashboardView;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -76,6 +83,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.content.Context.BATTERY_SERVICE;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
@@ -98,7 +106,11 @@ public class NewCycleFragment extends MyLazyFragment {
 
     public static final int POSITION_ALTITUDE = 2;
 
-    public static final int POSITION_TIME = 3;
+    public static final int POSITION_BATTERY = 3;
+
+    public static final int POSITION_WEATHER = 4;
+
+    public static final int POSITION_TIME = 5;
 
     private static final String TAG = "NewCycleFragment";
 
@@ -110,7 +122,9 @@ public class NewCycleFragment extends MyLazyFragment {
 
     private static final int STATUS_PAUSE = 2;
 
-    private static final int mDataRaw = 2;
+    private static final int mDataRaw = 3;
+
+    private static final int REFRESH_ALL = 0;
 
     private int mCurrentStatus;
 
@@ -126,6 +140,12 @@ public class NewCycleFragment extends MyLazyFragment {
 
     private boolean isGatherRunning;
 
+    private String mCurTime = "00:00";
+
+    private String mCurBattery = "0%";
+
+    private String mCurTmp = "--";
+
     private SimpleAdapter mSimpleAdapter;
 
     private List<SimpleModel> modelList;
@@ -139,6 +159,23 @@ public class NewCycleFragment extends MyLazyFragment {
     private Timer mQueryTimer;
 
     private TimerTask queryTask;
+
+    private Handler mHandler;
+
+    /**
+     * 时间、时区改变广播
+     */
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("Test", "onReceive: ");
+            if (intent == null) {
+                return;
+            }
+
+            updateBatteryAndTime();
+        }
+    };
 
     private OnTrackLifecycleListener onTrackListener = new SimpleOnTrackLifecycleListener() {
 
@@ -282,17 +319,97 @@ public class NewCycleFragment extends MyLazyFragment {
 
     @Override
     protected void initView() {
+
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                if (REFRESH_ALL == msg.what) {
+                    if (mSimpleAdapter == null) {
+                        return;
+                    }
+                    mSimpleAdapter.notifyDataSetChanged();
+                }
+            }
+        };
+
+
         modelList = new ArrayList<>();
         modelList.add(POSITION_KM, new RunningDataModel("里程(KM)", "0"));
         modelList.add(POSITION_CAL, new RunningDataModel("热量(卡路里)", "0"));
         modelList.add(POSITION_ALTITUDE, new RunningDataModel("实时海拔(M)", "0"));
-        modelList.add(POSITION_TIME, new RunningDataModel("电池电量", "0"));
+        modelList.add(POSITION_BATTERY, new RunningDataModel("电池电量", String.valueOf(mCurBattery)));
+        modelList.add(POSITION_WEATHER, new RunningDataModel("气温(摄氏度)", "--"));
+        modelList.add(POSITION_TIME, new RunningDataModel("时间", mCurTime));
 
         mSimpleAdapter = new SimpleAdapter.Builder(getContext())
                 .recyclerView(mRecyclerView)
                 .layoutManager(new StaggeredGridLayoutManager(mDataRaw, StaggeredGridLayoutManager.VERTICAL))
                 .data(modelList)
                 .build();
+
+        updateBatteryAndTime();
+//        //时间与电量获取
+        Timer timer = new Timer();
+
+        TimerTask taskPer30Min = new TimerTask() {
+            @Override
+            public void run() {
+                //温度获取
+                RetrofitWrapper.getInstance(CommonConstance.HE_WEATHER_URL)
+                        .createService(HeWeatherApiService.class)
+                        .nowWeather("CN101040100", CommonConstance.KEY_HE_WEATHER)
+                        .enqueue(new Callback<HeWeatherModel>() {
+                            @Override
+                            public void onResponse(Call<HeWeatherModel> call, Response<HeWeatherModel> response) {
+                                if (!response.isSuccessful()) {
+                                    return;
+                                }
+                                HeWeatherModel model = response.body();
+                                if (model == null) {
+                                    return;
+                                }
+                                List<HeWeatherModel.HeWeather6Bean> heWeather6 = model.HeWeather6;
+                                if (heWeather6 == null || heWeather6.isEmpty()) {
+                                    return;
+                                }
+                                HeWeatherModel.HeWeather6Bean bean = heWeather6.get(0);
+
+                                if (bean == null) {
+                                    return;
+                                }
+                                HeWeatherModel.HeWeather6Bean.NowBean now = bean.now;
+                                if (now == null) {
+                                    return;
+                                }
+                                mCurTmp = now.tmp;
+                                Log.d(TAG, "onResponse: tmp = " + mCurTmp);
+                                RunningDataModel weatherModel = (RunningDataModel) modelList.get(POSITION_WEATHER);
+                                if (weatherModel != null) {
+                                    weatherModel.mData = mCurTmp;
+                                    mSimpleAdapter.notifyItemChanged(POSITION_WEATHER);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<HeWeatherModel> call, Throwable t) {
+
+                            }
+                        });
+            }
+        };
+        timer.schedule(taskPer30Min, 0,30 * 60 * 1000);
+
+        IntentFilter filter = new IntentFilter();
+        //（每分钟发出的广播）
+        filter.addAction(Intent.ACTION_TIME_TICK);
+        //时间改变
+        filter.addAction(Intent.ACTION_TIME_CHANGED);
+        //时区改变
+        filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        if (getContext() != null) {
+            getContext().registerReceiver(mBroadcastReceiver, filter);
+        }
 
         //初始化操作视图状态
         mBtnDone.setVisibility(View.GONE);
@@ -394,6 +511,9 @@ public class NewCycleFragment extends MyLazyFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (getContext() != null) {
+            getContext().unregisterReceiver(mBroadcastReceiver);
+        }
         if (mLocationManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 mLocationManager.unregisterGnssStatusCallback(mGnssStatusCallback);
@@ -546,6 +666,35 @@ public class NewCycleFragment extends MyLazyFragment {
         criteria.setAltitudeRequired(true); // 设置是否需要海拔信息
         criteria.setPowerRequirement(Criteria.POWER_LOW); // 设置对电源的需求
         return criteria;
+    }
+
+    /**
+     * 更新时间与电量
+     */
+    private void updateBatteryAndTime() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        Date date = new Date(System.currentTimeMillis());
+        mCurTime = simpleDateFormat.format(date);
+        RunningDataModel timeModel = (RunningDataModel) modelList.get(POSITION_TIME);
+        if (timeModel != null) {
+            timeModel.mData = mCurTime;
+        }
+
+        int battery;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            BatteryManager batteryManager = (BatteryManager) getSystemService(BATTERY_SERVICE);
+            battery = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+            if (mCurBattery.equals(String.valueOf(battery) + "%")) {
+                return;
+            }
+            mCurBattery = String.valueOf(battery) + "%";
+            RunningDataModel batteryModel = (RunningDataModel) modelList.get(POSITION_BATTERY);
+            if (batteryModel != null) {
+                batteryModel.mData = mCurBattery;
+            }
+        }
+
+        mHandler.sendEmptyMessage(REFRESH_ALL);
     }
 
     /**

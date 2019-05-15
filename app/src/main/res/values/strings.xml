@@ -50,6 +50,8 @@
     <string name="cancel">取消</string>
 
     <string name="ride_time">骑行时间</string>
+    <string name="setting">设置</string>
+    <string name="safe">辅助</string>
 
 
 </resources>
