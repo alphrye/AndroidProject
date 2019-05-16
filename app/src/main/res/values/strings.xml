@@ -51,7 +51,8 @@
 
     <string name="ride_time">骑行时间</string>
     <string name="setting">设置</string>
-    <string name="safe">辅助</string>
+    <string name="safe">闪光灯</string>
+    <string name="tv_start">开始一次骑行</string>
 
 
 </resources>

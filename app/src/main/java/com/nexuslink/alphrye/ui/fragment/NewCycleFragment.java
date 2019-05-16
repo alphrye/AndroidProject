@@ -56,11 +56,13 @@ import com.nexuslink.alphrye.common.CommonConstance;
 import com.nexuslink.alphrye.common.MyApplication;
 import com.nexuslink.alphrye.common.MyLazyFragment;
 import com.nexuslink.alphrye.cyctastic.R;
+import com.nexuslink.alphrye.helper.FlashLightHelper;
 import com.nexuslink.alphrye.helper.MyLogUtil;
 import com.nexuslink.alphrye.helper.SPUtil;
 import com.nexuslink.alphrye.helper.SimpleOnTrackLifecycleListener;
 import com.nexuslink.alphrye.helper.SimpleOnTrackListener;
 import com.nexuslink.alphrye.model.CommonEagleNetModel;
+import com.nexuslink.alphrye.model.FlashlightChangeEvent;
 import com.nexuslink.alphrye.model.FullServerModel;
 import com.nexuslink.alphrye.model.HeWeatherModel;
 import com.nexuslink.alphrye.model.RunningDataModel;
@@ -69,6 +71,10 @@ import com.nexuslink.alphrye.model.SimpleServerModel;
 import com.nexuslink.alphrye.net.wrapper.RetrofitWrapper;
 import com.nexuslink.alphrye.ui.activity.HomeActivity;
 import com.nexuslink.alphrye.ui.weight.DashboardView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -139,6 +145,8 @@ public class NewCycleFragment extends MyLazyFragment {
     private boolean isServiceRunning;
 
     private boolean isGatherRunning;
+
+    private boolean isFlashlightOn;
 
     private String mCurTime = "00:00";
 
@@ -288,6 +296,24 @@ public class NewCycleFragment extends MyLazyFragment {
     @BindView(R.id.v_chronometer)
     Chronometer mChronometer;
 
+    @BindView(R.id.status_flash)
+    TextView mFlashLight;
+
+    @OnClick(R.id.status_flash) void onFlashLightClick() {
+        if (SPUtil.getBoolean(CommonConstance.SP_STATUS_FLASH, false)) {
+            toast("手动管理闪光灯需要先关闭自动闪光灯");
+            return;
+        }
+
+        isFlashlightOn = !isFlashlightOn;
+        FlashLightHelper.getInstance().switchFlashLight(isFlashlightOn, new FlashLightHelper.OnSwitchCallBack() {
+            @Override
+            public void onSwitch(boolean b) {
+                mFlashLight.setText(b?"关":"开");
+            }
+        });
+    }
+
     @OnClick(R.id.btn_start_or_pause)
     void onStartOrPause() {
         if (mCurrentStatus == STATUS_READY) {
@@ -415,10 +441,17 @@ public class NewCycleFragment extends MyLazyFragment {
         mBtnDone.setVisibility(View.GONE);
         mBtnStartOrPause.setText("开始");
         mCurrentStatus = STATUS_READY;
+
+        if (SPUtil.getBoolean(CommonConstance.SP_STATUS_FLASH, false)) {
+            mFlashLight.setText("自动");
+        } else {
+            mFlashLight.setText("开");
+        }
     }
 
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
         mAMapTrackClient = new AMapTrackClient(MyApplication.getContext());
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Typeface typeface = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "lcd_num.ttf");
@@ -511,6 +544,7 @@ public class NewCycleFragment extends MyLazyFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         if (getContext() != null) {
             getContext().unregisterReceiver(mBroadcastReceiver);
         }
@@ -521,6 +555,25 @@ public class NewCycleFragment extends MyLazyFragment {
                 // TODO: 2019/5/9 适配Android低版本
             }
         }
+    }
+
+    @Override
+    public void onPageSelect() {
+        super.onPageSelect();
+        boolean isAto = SPUtil.getBoolean(CommonConstance.SP_STATUS_FLASH, false);
+        if (isAto) {
+            mFlashLight.setText("自动");
+        } else {
+            mFlashLight.setText(isFlashlightOn ? "关" : "开");
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFlashLightStatusChange(FlashlightChangeEvent event) {
+        if (event == null) {
+            return;
+        }
+        isFlashlightOn = event.getStatus();
     }
 
     /**

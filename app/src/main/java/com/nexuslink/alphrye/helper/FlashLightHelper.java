@@ -14,6 +14,7 @@ import com.nexuslink.alphrye.common.MyApplication;
  */
 public class FlashLightHelper {
 
+    public static final float VALUE_LX_OPEN_FLASH_LIGHT = 10.0f;
     private static FlashLightHelper mInstance;
     private CameraManager mCameraManager;
 

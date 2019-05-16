@@ -3,12 +3,16 @@ package com.nexuslink.alphrye.common;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.support.multidex.MultiDex;
-import android.util.Log;
 
 import com.nexuslink.alphrye.helper.ActivityStackManager;
 import com.hjq.toast.ToastUtils;
 import com.hjq.umeng.UmengHelper;
+import com.nexuslink.alphrye.helper.FlashLightHelper;
+import com.nexuslink.alphrye.helper.SPUtil;
 import com.nexuslink.alphrye.helper.SensorHelper;
+import com.nexuslink.alphrye.model.FlashlightChangeEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  *    author : Android 轮子哥
@@ -17,6 +21,7 @@ import com.nexuslink.alphrye.helper.SensorHelper;
  *    desc   : 项目中的Application基类
  */
 public class MyApplication extends UIApplication implements SensorHelper.ISensorChangeObserver {
+
     private static Context sContext;
 
     private SensorHelper mSensorHelper;
@@ -58,7 +63,19 @@ public class MyApplication extends UIApplication implements SensorHelper.ISensor
     @Override
     public void onSensorChange(float[] values, int type) {
         if (type == Sensor.TYPE_LIGHT) {
-            Log.d("Test", "onSensorChange: light:" + values[0]);
+            float value = values[0];
+            // TODO: 2019/1/5  本地sp获取状态，检查手动开启，设置状态
+            Boolean isAuto = SPUtil.getBoolean(CommonConstance.SP_STATUS_FLASH, false);
+            if (isAuto) {
+                FlashLightHelper
+                        .getInstance()
+                        .switchFlashLight(value < FlashLightHelper.VALUE_LX_OPEN_FLASH_LIGHT, new FlashLightHelper.OnSwitchCallBack() {
+                            @Override
+                            public void onSwitch(boolean b) {
+                                EventBus.getDefault().post(new FlashlightChangeEvent(b));
+                            }
+                        });
+            }
         }
     }
 

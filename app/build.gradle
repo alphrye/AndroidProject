@@ -154,6 +154,8 @@ dependencies {
 
     // 二维码：https://github.com/bingoogolapple/BGAQRCode-Android
 
+    implementation 'org.greenrobot:eventbus:3.1.1'
+
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation files('libs/AMap3DMap_6.8.0_AMapNavi_6.7.0_AMapSearch_6.5.0_AMapTrack_1.1.0_AMapLocation_4.5.1_20190402.jar')
