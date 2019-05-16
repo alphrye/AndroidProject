@@ -114,11 +114,15 @@ public class NewCycleFragment extends MyLazyFragment {
 
     public static final int POSITION_ALTITUDE = 2;
 
-    public static final int POSITION_BATTERY = 3;
+    public static final int POSITION_WEATHER = 3;
 
-    public static final int POSITION_WEATHER = 4;
+    public static final int POSITION_WIND_DIR = 4;
 
-    public static final int POSITION_TIME = 5;
+    public static final int POSITION_WIND_ZI = 5;
+
+    public static final int POSITION_VIS = 6;
+
+    public static final int POSITION_PCPN = 7;
 
     private static final String TAG = "NewCycleFragment";
 
@@ -130,9 +134,10 @@ public class NewCycleFragment extends MyLazyFragment {
 
     private static final int STATUS_PAUSE = 2;
 
-    private static final int mDataRaw = 3;
+    private static final int mDataRaw = 4;
 
     private static final int REFRESH_ALL = 0;
+
     private static final int UPDATE_SPEED = 1;
 
     private int curSec;
@@ -160,6 +165,16 @@ public class NewCycleFragment extends MyLazyFragment {
     private String mCurBattery = "0%";
 
     private String mCurTmp = "--";
+
+    private String mWindDir = "--";
+
+    private String mWindSpd = "0";
+
+    private String mVis = "0";
+
+    private String mPcpn = "0";
+
+    private String mPres = "0";
 
     private SimpleAdapter mSimpleAdapter;
 
@@ -308,6 +323,16 @@ public class NewCycleFragment extends MyLazyFragment {
     @BindView(R.id.status_flash)
     TextView mFlashLight;
 
+    @BindView(R.id.v_battery)
+    TextView mBattery;
+
+    @BindView(R.id.tv_cur_time)
+    TextView mTvCurTime;
+
+    @BindView(R.id.beyound_speed)
+    TextView mTestBeyoundSpeed;
+
+
     @OnClick(R.id.status_flash) void onFlashLightClick() {
         if (SPUtil.getBoolean(CommonConstance.SP_STATUS_FLASH, false)) {
             toast("手动管理闪光灯需要先关闭自动闪光灯");
@@ -402,14 +427,15 @@ public class NewCycleFragment extends MyLazyFragment {
             }
         };
 
-
         modelList = new ArrayList<>();
         modelList.add(POSITION_KM, new RunningDataModel("里程(KM)", "0"));
-        modelList.add(POSITION_CAL, new RunningDataModel("热量(卡路里)", "0"));
+        modelList.add(POSITION_CAL, new RunningDataModel("热量(CAL)", "0"));
         modelList.add(POSITION_ALTITUDE, new RunningDataModel("实时海拔(M)", "0"));
-        modelList.add(POSITION_BATTERY, new RunningDataModel("电池电量", String.valueOf(mCurBattery)));
         modelList.add(POSITION_WEATHER, new RunningDataModel("气温(摄氏度)", "--"));
-        modelList.add(POSITION_TIME, new RunningDataModel("时间", mCurTime));
+        modelList.add(POSITION_WIND_DIR, new RunningDataModel("风向(M/S)", mWindDir));
+        modelList.add(POSITION_WIND_ZI, new RunningDataModel("压强(PA)", mPres));
+        modelList.add(POSITION_VIS, new RunningDataModel("能见度(M)", mVis));
+        modelList.add(POSITION_PCPN, new RunningDataModel("降雨量(MM)", mPcpn));
 
         mSimpleAdapter = new SimpleAdapter.Builder(getContext())
                 .recyclerView(mRecyclerView)
@@ -452,12 +478,37 @@ public class NewCycleFragment extends MyLazyFragment {
                                     return;
                                 }
                                 mCurTmp = now.tmp;
+                                mWindDir = now.wind_dir;
+                                mWindSpd = now.wind_spd;
+                                mPres = now.pres;
+                                mVis = now.vis;
+                                mPcpn = now.pcpn;
                                 Log.d(TAG, "onResponse: tmp = " + mCurTmp);
                                 RunningDataModel weatherModel = (RunningDataModel) modelList.get(POSITION_WEATHER);
                                 if (weatherModel != null) {
                                     weatherModel.mData = mCurTmp;
-                                    mSimpleAdapter.notifyItemChanged(POSITION_WEATHER);
                                 }
+                                RunningDataModel windDirModel = (RunningDataModel) modelList.get(POSITION_WIND_DIR);
+                                if (windDirModel != null) {
+                                    windDirModel.mData = mWindSpd;
+                                    windDirModel.mTitle = mWindDir;
+                                }
+
+                                RunningDataModel ziModel = (RunningDataModel) modelList.get(POSITION_WIND_ZI);
+                                if (ziModel != null) {
+                                    ziModel.mData = mPres;
+                                }
+                                RunningDataModel visModel = (RunningDataModel) modelList.get(POSITION_VIS);
+                                if (visModel != null) {
+                                    visModel.mData = mVis;
+                                }
+
+                                RunningDataModel pcpnModel = (RunningDataModel) modelList.get(POSITION_PCPN);
+                                if (pcpnModel != null) {
+                                    pcpnModel.mData = mPcpn;
+                                }
+
+                                mSimpleAdapter.notifyDataSetChanged();
                             }
 
                             @Override
@@ -612,6 +663,12 @@ public class NewCycleFragment extends MyLazyFragment {
             mFlashLight.setText("自动");
         } else {
             mFlashLight.setText(isFlashlightOn ? "关" : "开");
+        }
+        boolean isTest = SPUtil.getBoolean(CommonConstance.SP_STATUS_TEST, false);
+        if (isTest) {
+            mTestBeyoundSpeed.setVisibility(View.VISIBLE);
+        } else {
+            mTestBeyoundSpeed.setVisibility(View.GONE);
         }
     }
 
@@ -816,10 +873,9 @@ public class NewCycleFragment extends MyLazyFragment {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         Date date = new Date(System.currentTimeMillis());
         mCurTime = simpleDateFormat.format(date);
-        RunningDataModel timeModel = (RunningDataModel) modelList.get(POSITION_TIME);
-        if (timeModel != null) {
-            timeModel.mData = mCurTime;
-        }
+        Typeface typeface = Typeface.createFromAsset(MyApplication.getContext().getAssets(), "lcd_num.ttf");
+        mTvCurTime.setTypeface(typeface);
+        mTvCurTime.setText(mCurTime);
 
         int battery;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -829,13 +885,9 @@ public class NewCycleFragment extends MyLazyFragment {
                 return;
             }
             mCurBattery = String.valueOf(battery) + "%";
-            RunningDataModel batteryModel = (RunningDataModel) modelList.get(POSITION_BATTERY);
-            if (batteryModel != null) {
-                batteryModel.mData = mCurBattery;
-            }
+            mBattery.setTypeface(typeface);
+            mBattery.setText(mCurBattery);
         }
-
-        mHandler.sendEmptyMessage(REFRESH_ALL);
     }
 
     /**
