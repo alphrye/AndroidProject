@@ -20,4 +20,6 @@ public interface CommonConstance {
     String SP_TERMINAL_ID = "TERMINAL_ID";
 
     String SP_SERVER_ID = "SERVER_ID";
+
+    String SP_STATUS_FLASH = "STATUS_FLASH";
 }

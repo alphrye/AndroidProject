@@ -8,6 +8,7 @@ import com.nexuslink.alphrye.common.MyLazyFragment;
 import com.nexuslink.alphrye.ui.fragment.MapFragment;
 import com.nexuslink.alphrye.ui.fragment.NewCycleFragment;
 import com.nexuslink.alphrye.ui.fragment.ProfileFragment;
+import com.nexuslink.alphrye.ui.fragment.SettingFragment;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public final class HomeFragmentAdapter extends BaseFragmentAdapter<MyLazyFragmen
 //        list.add(ExploreFragment.newInstance());
         list.add(MapFragment.newInstance());
         list.add(NewCycleFragment.newInstance());
-        list.add(ProfileFragment.newInstance());
+        list.add(SettingFragment.newInstance());
         mFragmentList = list;
     }
 

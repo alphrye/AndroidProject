@@ -5,13 +5,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
+    <!--标题栏-->
     <com.hjq.bar.TitleBar
         android:id="@+id/tb_setting_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:backButton="false"
         android:background="@color/color_main"
         app:titleColor="@color/white"
-        app:title="设置"/>
+        app:title="设置"
+        app:lineColor="@color/color_main"/>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -24,30 +27,60 @@
             android:layout_marginTop="8dp">
 
             <!--头像-->
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <TextView
+                <Switch
+                    android:id="@+id/switch_auto_flash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16dp"/>
+
+                <LinearLayout
+                    android:layout_toLeftOf="@+id/switch_auto_flash"
+                    android:id="@+id/ll_flash"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:textSize="16sp"
-                    android:textColor="@color/color_333333"
-                    android:drawableRight="@mipmap/icon_my_more"
-                    android:text="头像"/>
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/color_333333"
+                        android:text="自动闪光灯"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="4dp"
+                        android:textSize="12sp"
+                        android:paddingBottom="8dp"
+                        android:text="根据亮度自动启用闪光灯"/>
+                </LinearLayout>
 
                 <View
+                    android:layout_below="@+id/ll_flash"
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"
                     android:background="@color/colorLine" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
             <!--用户名-->
             <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -73,6 +106,7 @@
 
             <!--情亲账号-->
             <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -98,6 +132,7 @@
 
             <!--退出登录-->
             <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

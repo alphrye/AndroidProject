@@ -103,7 +103,7 @@
             android:visibility="visible"/>
 
         <TextView
-            android:text="@string/safe"
+            android:id="@+id/status_flash"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/safe"
@@ -116,6 +116,16 @@
             android:visibility="visible"
             android:textColor="@color/white"/>
 
+        <TextView
+            android:text="@string/safe"
+            android:id="@+id/flashlight"
+            android:layout_below="@id/status_flash"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/btn_start_or_pause"
+            android:layout_toRightOf="@+id/btn_start_or_pause"
+            android:gravity="center"
+            android:layout_marginTop="8dp"/>
         <TextView
             android:visibility="gone"
             android:id="@+id/tv_debug"
