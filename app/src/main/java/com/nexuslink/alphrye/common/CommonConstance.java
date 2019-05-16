@@ -22,4 +22,7 @@ public interface CommonConstance {
     String SP_SERVER_ID = "SERVER_ID";
 
     String SP_STATUS_FLASH = "STATUS_FLASH";
+
+    String SP_STATUS_SPEED = "STATUS_SPEED";
+
 }
