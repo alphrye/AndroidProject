@@ -280,7 +280,7 @@ public class DashboardView extends View {
                 invalidate();
             }
         });
-        valueAnimator.setDuration((long) (generalSpeed * 100));
+        valueAnimator.setDuration((long) (Math.abs(accurateSpeed - mCurSpeed ) * 100));
         valueAnimator.start();
         invalidate();
     }

@@ -133,6 +133,7 @@ public class NewCycleFragment extends MyLazyFragment {
     private static final int mDataRaw = 3;
 
     private static final int REFRESH_ALL = 0;
+    private static final int UPDATE_SPEED = 1;
 
     private int curSec;
 
@@ -341,6 +342,37 @@ public class NewCycleFragment extends MyLazyFragment {
         onRideFinishClick();
     }
 
+    //测试
+    @OnClick(R.id.beyound_speed)
+    void onBeyoundSpeed() {
+        int speed = 5;
+        mDashboardView.updateSpeed(speed);
+        final boolean isSpeedOn = SPUtil.getBoolean(CommonConstance.SP_STATUS_SPEED, true);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isSpeedOn && !isCountDonw) {
+                    startAuto("骑车帮提醒您：请减速慢行，道路千万条，安全第一条。行车不规范，亲人两行泪");
+                    isCountDonw = true;
+                    curSec = 10;
+                    Timer timer = new Timer();
+                    TimerTask task = new TimerTask() {
+                        @Override
+                        public void run() {
+                            curSec--;
+                            if (curSec == 0) {
+                                isCountDonw = false;
+                                cancel();
+                                mHandler.sendEmptyMessage(UPDATE_SPEED);
+                            }
+                        }
+                    };
+                    timer.schedule(task, 0, 1000);
+                }
+            }
+        }, (long) (speed * 3.6 * 100));
+    }
+
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_new_cycle;
@@ -363,6 +395,9 @@ public class NewCycleFragment extends MyLazyFragment {
                         return;
                     }
                     mSimpleAdapter.notifyDataSetChanged();
+                } else if (UPDATE_SPEED == msg.what){
+                    //测试
+                    mDashboardView.updateSpeed(0);
                 }
             }
         };
@@ -829,7 +864,7 @@ public class NewCycleFragment extends MyLazyFragment {
             return;
         }
         float speed = location.getSpeed();
-        if (speed > 18) {
+        if (speed >= 5) {
             boolean isSpeedOn = SPUtil.getBoolean(CommonConstance.SP_STATUS_SPEED, true);
             if (isSpeedOn && !isCountDonw) {
                 startAuto("骑车帮提醒您：请减速慢行，道路千万条，安全第一条。行车不规范，亲人两行泪");
