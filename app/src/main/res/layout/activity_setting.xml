@@ -78,6 +78,57 @@
 
             </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/switch_speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16dp"/>
+
+                <LinearLayout
+                    android:layout_toLeftOf="@+id/switch_speed"
+                    android:id="@+id/ll_speed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:textSize="16sp"
+                        android:textColor="@color/color_333333"
+                        android:text="超速提醒"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="4dp"
+                        android:textSize="12sp"
+                        android:paddingBottom="8dp"
+                        android:text="骑行速度过快时提醒骑行者减速"/>
+                </LinearLayout>
+
+                <View
+                    android:layout_below="@+id/ll_flash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="1dp"
+                    android:background="@color/colorLine" />
+
+            </RelativeLayout>
+
             <!--用户名-->
             <LinearLayout
                 android:visibility="gone"

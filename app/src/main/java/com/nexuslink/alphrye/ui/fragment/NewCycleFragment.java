@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
@@ -80,6 +81,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -132,6 +134,8 @@ public class NewCycleFragment extends MyLazyFragment {
 
     private static final int REFRESH_ALL = 0;
 
+    private int curSec;
+
     private int mCurrentStatus;
 
     private long terminalId;
@@ -147,6 +151,8 @@ public class NewCycleFragment extends MyLazyFragment {
     private boolean isGatherRunning;
 
     private boolean isFlashlightOn;
+
+    private boolean isCountDonw;
 
     private String mCurTime = "00:00";
 
@@ -169,6 +175,8 @@ public class NewCycleFragment extends MyLazyFragment {
     private TimerTask queryTask;
 
     private Handler mHandler;
+
+    private TextToSpeech textToSpeech;
 
     /**
      * 时间、时区改变广播
@@ -533,6 +541,8 @@ public class NewCycleFragment extends MyLazyFragment {
         };
 
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
+
+        initTTS();
     }
 
     @Override
@@ -545,6 +555,8 @@ public class NewCycleFragment extends MyLazyFragment {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        textToSpeech.stop(); // 不管是否正在朗读TTS都被打断
+        textToSpeech.shutdown(); // 关闭，释放资源
         if (getContext() != null) {
             getContext().unregisterReceiver(mBroadcastReceiver);
         }
@@ -574,6 +586,47 @@ public class NewCycleFragment extends MyLazyFragment {
             return;
         }
         isFlashlightOn = event.getStatus();
+    }
+    private void initTTS() {
+        //实例化自带语音对象
+        textToSpeech = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == textToSpeech.SUCCESS) {
+                    // Toast.makeText(MainActivity.this,"成功输出语音",
+                    // Toast.LENGTH_SHORT).show();
+                    // Locale loc1=new Locale("us");
+                    // Locale loc2=new Locale("china");
+
+//                    textToSpeech.setPitch(1.0f);//方法用来控制音调
+//                    textToSpeech.setSpeechRate(1.0f);//用来控制语速
+
+                    //判断是否支持下面两种语言
+                    int result1 = textToSpeech.setLanguage(Locale.US);
+                    int result2 = textToSpeech.setLanguage(Locale.
+                            SIMPLIFIED_CHINESE);
+                    boolean a = (result1 == TextToSpeech.LANG_MISSING_DATA || result1 == TextToSpeech.LANG_NOT_SUPPORTED);
+                    boolean b = (result2 == TextToSpeech.LANG_MISSING_DATA || result2 == TextToSpeech.LANG_NOT_SUPPORTED);
+
+                    Log.i("zhh_tts", "US支持否？--》" + a +
+                            "\nzh-CN支持否》--》" + b);
+
+                } else {
+                    toast("数据丢失或不支持");
+                }
+
+            }
+        });
+    }
+
+    private void startAuto(String data) {
+        // 设置音调，值越大声音越尖（女生），值越小则变成男声,1.0是常规
+        textToSpeech.setPitch(0.9f);
+        // 设置语速
+        textToSpeech.setSpeechRate(1.0f);
+        textToSpeech.speak(data,//输入中文，若不支持的设备则不会读出来
+                TextToSpeech.QUEUE_FLUSH, null);
+
     }
 
     /**
@@ -776,6 +829,26 @@ public class NewCycleFragment extends MyLazyFragment {
             return;
         }
         float speed = location.getSpeed();
+        if (speed > 18) {
+            boolean isSpeedOn = SPUtil.getBoolean(CommonConstance.SP_STATUS_SPEED, true);
+            if (isSpeedOn && !isCountDonw) {
+                startAuto("骑车帮提醒您：请减速慢行，道路千万条，安全第一条。行车不规范，亲人两行泪");
+                isCountDonw = true;
+                curSec = 30;
+                Timer timer = new Timer();
+                TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        curSec--;
+                        if (curSec == 0) {
+                            isCountDonw = false;
+                            cancel();
+                        }
+                    }
+                };
+                timer.schedule(task, 0, 1000);
+            }
+        }
         MyLogUtil.d(TAG, "updateSpeedByLocation: speed = " + speed);
         mTvDebug.setText("speed: " + speed);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {

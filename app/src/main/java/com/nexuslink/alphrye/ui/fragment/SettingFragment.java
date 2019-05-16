@@ -19,7 +19,12 @@ public class SettingFragment extends MyLazyFragment {
     @BindView(R.id.switch_auto_flash)
     Switch mSwithcAutoflash;
 
+    @BindView(R.id.switch_speed)
+    Switch mSwitchSpeed;
+
     private boolean isAuto;
+
+    private boolean isSpeedOn;
 
     public static MyLazyFragment newInstance() {
         return new SettingFragment();
@@ -45,6 +50,17 @@ public class SettingFragment extends MyLazyFragment {
             public void onClick(View v) {
                 isAuto = !isAuto;
                 SPUtil.putBoolean(CommonConstance.SP_STATUS_FLASH, isAuto);
+            }
+        });
+
+        isSpeedOn = SPUtil.getBoolean(CommonConstance.SP_STATUS_SPEED, true);
+        mSwitchSpeed.setChecked(isSpeedOn);
+
+        mSwitchSpeed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isSpeedOn = !isSpeedOn;
+                SPUtil.putBoolean(CommonConstance.SP_STATUS_SPEED, isSpeedOn);
             }
         });
     }
