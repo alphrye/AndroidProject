@@ -491,7 +491,7 @@ public class NewCycleFragment extends MyLazyFragment {
                                 RunningDataModel windDirModel = (RunningDataModel) modelList.get(POSITION_WIND_DIR);
                                 if (windDirModel != null) {
                                     windDirModel.mData = mWindSpd;
-                                    windDirModel.mTitle = mWindDir;
+                                    windDirModel.mTitle = mWindDir + "(M/S)";
                                 }
 
                                 RunningDataModel ziModel = (RunningDataModel) modelList.get(POSITION_WIND_ZI);
