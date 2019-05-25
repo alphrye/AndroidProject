@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
@@ -22,12 +23,17 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Chronometer;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.amap.api.track.AMapTrackClient;
@@ -43,6 +49,7 @@ import com.amap.api.track.query.model.AddTrackResponse;
 import com.amap.api.track.query.model.DistanceRequest;
 import com.amap.api.track.query.model.DistanceResponse;
 import com.amap.api.track.query.model.HistoryTrackResponse;
+import com.amap.api.track.query.model.LatestPointRequest;
 import com.amap.api.track.query.model.LatestPointResponse;
 import com.amap.api.track.query.model.OnTrackListener;
 import com.amap.api.track.query.model.ParamErrorResponse;
@@ -331,6 +338,9 @@ public class NewCycleFragment extends MyLazyFragment {
 
     @BindView(R.id.beyound_speed)
     TextView mTestBeyoundSpeed;
+
+    @BindView(R.id.v_test)
+    LinearLayout mLLTest;
 
 
     @OnClick(R.id.status_flash) void onFlashLightClick() {
@@ -666,9 +676,11 @@ public class NewCycleFragment extends MyLazyFragment {
         }
         boolean isTest = SPUtil.getBoolean(CommonConstance.SP_STATUS_TEST, false);
         if (isTest) {
-            mTestBeyoundSpeed.setVisibility(View.VISIBLE);
+            mLLTest.setVisibility(View.VISIBLE);
+//            mTestBeyoundSpeed.setVisibility(View.VISIBLE);
         } else {
-            mTestBeyoundSpeed.setVisibility(View.GONE);
+            mLLTest.setVisibility(View.GONE);
+//            mTestBeyoundSpeed.setVisibility(View.GONE);
         }
     }
 
@@ -733,6 +745,7 @@ public class NewCycleFragment extends MyLazyFragment {
      * 开始骑行点击事件
      */
     private void onRideStartClick() {
+
         mCurrentStatus = STATUS_RUNNING;
         mBtnDone.setVisibility(View.VISIBLE);
         mBtnStartOrPause.setText("暂停");
@@ -748,6 +761,37 @@ public class NewCycleFragment extends MyLazyFragment {
         if (!isServiceRunning) {
             //开启猎鹰轨迹上报
             startEagleReport();
+        }
+    }
+
+    private void showMsgDialog() {
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+        new AlertDialog.Builder(context)
+                .setTitle("提示")
+                .setMessage("发送短信开启开启监督骑行？")
+                .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sendMsg();
+                    }
+                })
+                .setNegativeButton("否", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
+    private void sendMsg() {
+        SmsManager smsManager = SmsManager.getDefault();
+        String content = "【骑车帮】您的好友邀请您进行监督骑行，骑行期间您可以了解好友的实时信息。验证信息服务ID：" + serverId + " 终端号：" + terminalId;
+        ArrayList<String> list = smsManager.divideMessage(content);
+        for (int i = 0; i < list.size(); i++) {
+            smsManager.sendTextMessage("18510167427", null, list.get(i), null, null);
         }
     }
 
@@ -1078,6 +1122,7 @@ public class NewCycleFragment extends MyLazyFragment {
                         // 当前终端已经创建过，直接使用查询到的terminal id
                         terminalId = queryTerminalResponse.getTid();
                         SPUtil.putLong(CommonConstance.SP_TERMINAL_ID, terminalId);
+                        showMsgDialog();
                         addTrack();
                     } else {
                         // 当前终端是新终端，还未创建过，创建该终端并使用新生成的terminal id
@@ -1087,6 +1132,7 @@ public class NewCycleFragment extends MyLazyFragment {
                                 if (addTerminalResponse.isSuccess()) {
                                     terminalId = addTerminalResponse.getTid();
                                     SPUtil.putLong(CommonConstance.SP_TERMINAL_ID, terminalId);
+                                    showMsgDialog();
                                     addTrack();
                                 } else {
                                     Toast.makeText(getContext(), "网络请求失败，" + addTerminalResponse.getErrorMsg(), Toast.LENGTH_SHORT).show();
@@ -1140,12 +1186,7 @@ public class NewCycleFragment extends MyLazyFragment {
         return wrapper.getEagleCall();
     }
 
-    /**
-     * 测试方法
-     * start查新测试
-     */
-    @OnClick(R.id.query)
-    void queryClick() {
+    private void queryClick() {
         OnTrackListener trackListener = new OnTrackListener(){
 
             @Override
@@ -1216,5 +1257,73 @@ public class NewCycleFragment extends MyLazyFragment {
         long cur = System.currentTimeMillis();
         DistanceRequest distanceRequest = new DistanceRequest(serverId, terminalId, cur - 1 * 60 * 60 * 1000, cur, -1);
         mAMapTrackClient.queryDistance(distanceRequest, trackListener);
+    }
+
+    /**
+     * 测试方法
+     * start查新测试
+     */
+    @OnClick(R.id.query)
+    void onQuery() {
+        OnTrackListener trackListener = new OnTrackListener(){
+
+            @Override
+            public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
+
+            }
+
+            @Override
+            public void onCreateTerminalCallback(AddTerminalResponse addTerminalResponse) {
+
+            }
+
+            @Override
+            public void onDistanceCallback(DistanceResponse distanceResponse) {
+                if (distanceResponse.isSuccess()) {
+                    double meters = distanceResponse.getDistance();
+                    // 行驶里程查询成功，行驶了meters米
+                    Log.d(TAG, "onDistanceCallback: " + meters);
+                    updateDistance((int) meters);
+                } else {
+                    // 行驶里程查询失败
+                }
+            }
+
+            @Override
+            public void onLatestPointCallback(LatestPointResponse latestPointResponse) {
+                if (latestPointResponse.isSuccess()) {
+                    Point point = latestPointResponse.getLatestPoint().getPoint();
+                    // 查询实时位置成功，point为实时位置信息
+                    if (point == null) {
+                        return;
+                    }
+                    toast("维度: " + point.getLat() + "经度：" + point.getLng());
+                } else {
+                    // 查询实时位置失败
+                }
+            }
+
+            @Override
+            public void onHistoryTrackCallback(HistoryTrackResponse historyTrackResponse) {
+
+            }
+
+            @Override
+            public void onQueryTrackCallback(QueryTrackResponse queryTrackResponse) {
+
+            }
+
+            @Override
+            public void onAddTrackCallback(AddTrackResponse addTrackResponse) {
+
+            }
+
+            @Override
+            public void onParamErrorCallback(ParamErrorResponse paramErrorResponse) {
+
+            }
+        };
+
+        mAMapTrackClient.queryLatestPoint(new LatestPointRequest(serverId, terminalId), trackListener);
     }
 }

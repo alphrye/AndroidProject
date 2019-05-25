@@ -195,19 +195,26 @@
             android:background="@color/color_main"
             android:textColor="@color/white"/>
 
-        <Button
-            android:visibility="gone"
-            android:id="@+id/query"
-            android:text="query"
+        <LinearLayout
+            android:id="@+id/v_test"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/beyound_speed"
-            android:text="超速模拟"
-            android:alpha="0.7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/query"
+                android:text="模拟位置查询"
+                android:alpha="0.7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/beyound_speed"
+                android:text="超速模拟"
+                android:alpha="0.7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
     </RelativeLayout>
 
 </LinearLayout>

@@ -1,16 +1,21 @@
 package com.nexuslink.alphrye.ui.fragment;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.amap.api.location.AMapLocation;
@@ -24,6 +29,8 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
 import com.amap.api.services.core.AMapException;
 import com.amap.api.services.core.LatLonPoint;
@@ -34,6 +41,18 @@ import com.amap.api.services.route.RidePath;
 import com.amap.api.services.route.RideRouteResult;
 import com.amap.api.services.route.RouteSearch;
 import com.amap.api.services.route.WalkRouteResult;
+import com.amap.api.track.AMapTrackClient;
+import com.amap.api.track.query.entity.Point;
+import com.amap.api.track.query.model.AddTerminalResponse;
+import com.amap.api.track.query.model.AddTrackResponse;
+import com.amap.api.track.query.model.DistanceResponse;
+import com.amap.api.track.query.model.HistoryTrackResponse;
+import com.amap.api.track.query.model.LatestPointRequest;
+import com.amap.api.track.query.model.LatestPointResponse;
+import com.amap.api.track.query.model.OnTrackListener;
+import com.amap.api.track.query.model.ParamErrorResponse;
+import com.amap.api.track.query.model.QueryTerminalResponse;
+import com.amap.api.track.query.model.QueryTrackResponse;
 import com.nexuslink.alphrye.common.MyLazyFragment;
 import com.nexuslink.alphrye.cyctastic.R;
 import com.nexuslink.alphrye.helper.AMapUtil;
@@ -41,6 +60,9 @@ import com.nexuslink.alphrye.helper.MyLogUtil;
 import com.nexuslink.alphrye.helper.RideRouteOverlay;
 import com.nexuslink.alphrye.ui.activity.RideRouteCalculateActivity;
 import com.nexuslink.alphrye.ui.activity.SearchActivity;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -128,6 +150,8 @@ public class MapFragment extends MyLazyFragment {
      */
     private boolean isShowingRout;
 
+    private AMapTrackClient mAMapTrackClient;
+
     @BindView(R.id.tv_location)
     TextView mTvLocation;
 
@@ -142,6 +166,49 @@ public class MapFragment extends MyLazyFragment {
 
     @BindView(R.id.btn_cancel)
     CardView mBtnCancel;
+
+    @OnClick(R.id.card_help)
+    void onHelpClick() {
+        Context context = getContext();
+        if (context == null) {
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.layout_input_help_info, null);
+
+        final EditText etServerId = view.findViewById(R.id.et_serverId);
+        final EditText etTerminalId = view.findViewById(R.id.et_terminalId);
+        builder.setTitle("辅助").setView(view);
+        builder.setPositiveButton("完成", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                final String ternimalId = etTerminalId.getText().toString();
+                final String serverId = etServerId.getText().toString();
+                if (TextUtils.isEmpty(ternimalId) || TextUtils.isEmpty(serverId)) {
+                    return;
+                }
+                if (Long.parseLong(ternimalId) == 0 || Long.parseLong(serverId) == 0) {
+                    return;
+                }
+                Timer timer = new Timer();
+                TimerTask task = new TimerTask() {
+                    @Override
+                    public void run() {
+                        onQuery(Long.parseLong(serverId), Long.parseLong(ternimalId));
+                    }
+                };
+                timer.schedule(task, 0, 1000);
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
 
     public static MyLazyFragment newInstance() {
         return new MapFragment();
@@ -205,6 +272,7 @@ public class MapFragment extends MyLazyFragment {
 
     @Override
     protected void initData() {
+
 
     }
 
@@ -344,7 +412,6 @@ public class MapFragment extends MyLazyFragment {
 
             @Override
             public void onRideRouteSearched(RideRouteResult result, int errorCode) {
-                mAmap.clear();// 清理地图上的所有覆盖物
                 if (errorCode == AMapException.CODE_AMAP_SUCCESS) {
                     if (result != null && result.getPaths() != null) {
                         if (result.getPaths().size() > 0) {
@@ -484,5 +551,69 @@ public class MapFragment extends MyLazyFragment {
             //需要重新定位到当前位置
             notNeedMoveToCurPos = false;
         }
+    }
+
+    private void onQuery(long serverId, long terminalId) {
+        OnTrackListener trackListener = new OnTrackListener(){
+
+            @Override
+            public void onQueryTerminalCallback(QueryTerminalResponse queryTerminalResponse) {
+
+            }
+
+            @Override
+            public void onCreateTerminalCallback(AddTerminalResponse addTerminalResponse) {
+
+            }
+
+            @Override
+            public void onDistanceCallback(DistanceResponse distanceResponse) {
+
+            }
+
+            @Override
+            public void onLatestPointCallback(LatestPointResponse latestPointResponse) {
+                if (latestPointResponse.isSuccess()) {
+                    Point point = latestPointResponse.getLatestPoint().getPoint();
+                    // 查询实时位置成功，point为实时位置信息
+                    if (point == null) {
+                        return;
+                    }
+//                    toast("维度: " + point.getLat() + "经度：" + point.getLng());
+                    mAmap.clear();
+                    double speed = point.getSpeed();
+                    LatLng latLng = new LatLng(point.getLat(),point.getLng());
+                    mAmap.addMarker(new MarkerOptions().position(latLng).title("速度:" + speed * 3.6f + "km/h").snippet("好友位置").perspective(true));
+                    mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(point.getLat(), point.getLng()), DEFAULT_ZOOM_LEVEL));
+                } else {
+                    // 查询实时位置失败
+                }
+            }
+
+            @Override
+            public void onHistoryTrackCallback(HistoryTrackResponse historyTrackResponse) {
+
+            }
+
+            @Override
+            public void onQueryTrackCallback(QueryTrackResponse queryTrackResponse) {
+
+            }
+
+            @Override
+            public void onAddTrackCallback(AddTrackResponse addTrackResponse) {
+
+            }
+
+            @Override
+            public void onParamErrorCallback(ParamErrorResponse paramErrorResponse) {
+
+            }
+        };
+
+        if (mAMapTrackClient == null) {
+            mAMapTrackClient = new AMapTrackClient(getContext());
+        }
+        mAMapTrackClient.queryLatestPoint(new LatestPointRequest(serverId, terminalId), trackListener);
     }
 }
