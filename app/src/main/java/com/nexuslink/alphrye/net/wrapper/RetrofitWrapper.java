@@ -7,6 +7,9 @@ import com.nexuslink.alphrye.api.EagleApiService;
 import com.nexuslink.alphrye.common.CommonConstance;
 import com.nexuslink.alphrye.net.bean.CommonNetBean;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -21,6 +24,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitWrapper {
     private static RetrofitWrapper mInstance;
     private Retrofit mRetrofit;
+    private static Map<String, RetrofitWrapper> mMap = new HashMap<>();
+
 
     public static RetrofitWrapper getInstance () {
         if (mInstance == null) {
@@ -30,6 +35,7 @@ public class RetrofitWrapper {
     }
 
     public static RetrofitWrapper getInstance (String baseUrl) {
+        mInstance = mMap.get(baseUrl);
         if (mInstance == null) {
             mInstance = new RetrofitWrapper(baseUrl);
         }
