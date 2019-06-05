@@ -23,13 +23,13 @@ public class RunningDataItem extends SimpleItem<RunningDataModel> {
         if (viewHolder instanceof  ViewHolder) {
             if (!payloads.isEmpty()) {
                 int payload = (int) payloads.get(0);
-                if (payload == NewCycleFragment.POSITION_ALTITUDE) {
-                    String data = mModel.mData;
-                    if (TextUtils.isEmpty(data)) {
-                        data = "Null";
-                    }
-                    ((ViewHolder) viewHolder).mTvData.setText(data);
-                }
+//                if (payload == NewCycleFragment.POSITION_ALTITUDE) {
+//                    String data = mModel.mData;
+//                    if (TextUtils.isEmpty(data)) {
+//                        data = "Null";
+//                    }
+//                    ((ViewHolder) viewHolder).mTvData.setText(data);
+//                }
                 return;
             }
             String title = mModel.mTitle;

@@ -117,19 +117,19 @@ public class NewCycleFragment extends MyLazyFragment {
 
     public static final int POSITION_KM = 0;
 
-    public static final int POSITION_CAL = 1;
+//    public static final int POSITION_CAL = 1;
 
-    public static final int POSITION_ALTITUDE = 2;
+//    public static final int POSITION_ALTITUDE = 2;
 
-    public static final int POSITION_WEATHER = 3;
+    public static final int POSITION_WEATHER = 1;
 
-    public static final int POSITION_WIND_DIR = 4;
+    public static final int POSITION_WIND_DIR = 2;
 
-    public static final int POSITION_WIND_ZI = 5;
+    public static final int POSITION_WIND_ZI = 3;
 
-    public static final int POSITION_VIS = 6;
+    public static final int POSITION_VIS = 4;
 
-    public static final int POSITION_PCPN = 7;
+    public static final int POSITION_PCPN = 5;
 
     private static final String TAG = "NewCycleFragment";
 
@@ -141,7 +141,7 @@ public class NewCycleFragment extends MyLazyFragment {
 
     private static final int STATUS_PAUSE = 2;
 
-    private static final int mDataRaw = 4;
+    private static final int mDataRaw = 3;
 
     private static final int REFRESH_ALL = 0;
 
@@ -439,8 +439,8 @@ public class NewCycleFragment extends MyLazyFragment {
 
         modelList = new ArrayList<>();
         modelList.add(POSITION_KM, new RunningDataModel("里程(KM)", "0"));
-        modelList.add(POSITION_CAL, new RunningDataModel("热量(CAL)", "0"));
-        modelList.add(POSITION_ALTITUDE, new RunningDataModel("实时海拔(M)", "0"));
+//        modelList.add(POSITION_CAL, new RunningDataModel("热量(CAL)", "0"));
+//        modelList.add(POSITION_ALTITUDE, new RunningDataModel("实时海拔(M)", "0"));
         modelList.add(POSITION_WEATHER, new RunningDataModel("气温(摄氏度)", "--"));
         modelList.add(POSITION_WIND_DIR, new RunningDataModel("风向(M/S)", mWindDir));
         modelList.add(POSITION_WIND_ZI, new RunningDataModel("压强(PA)", mPres));
@@ -939,16 +939,16 @@ public class NewCycleFragment extends MyLazyFragment {
      * @param location
      */
     private void updateAltitudeByLocation(Location location) {
-        if (location == null) {
-            return;
-        }
-        double accAltitude = location.getAltitude();
-        MyLogUtil.d(TAG, "updateAltitudeByLocation: " + accAltitude);
-        SimpleModel model = modelList.get(POSITION_ALTITUDE);
-        if (model instanceof  RunningDataModel) {
-            ((RunningDataModel) model).mData = String.valueOf(Math.round(accAltitude));
-        }
-        mSimpleAdapter.notifyItemChanged(POSITION_ALTITUDE, FLAG_UPDATE_ALTITUDE);
+//        if (location == null) {
+//            return;
+//        }
+//        double accAltitude = location.getAltitude();
+//        MyLogUtil.d(TAG, "updateAltitudeByLocation: " + accAltitude);
+//        SimpleModel model = modelList.get(POSITION_ALTITUDE);
+//        if (model instanceof  RunningDataModel) {
+//            ((RunningDataModel) model).mData = String.valueOf(Math.round(accAltitude));
+//        }
+//        mSimpleAdapter.notifyItemChanged(POSITION_ALTITUDE, FLAG_UPDATE_ALTITUDE);
     }
 
     /**
@@ -1003,11 +1003,11 @@ public class NewCycleFragment extends MyLazyFragment {
             }
             ((RunningDataModel) modelDistance).mData = String.valueOf(distance);
         }
-        SimpleModel modelCal = modelList.get(POSITION_CAL);
-        if (modelCal instanceof  RunningDataModel) {
-            // TODO: 2019/5/10 卡路里计算
-            ((RunningDataModel) modelCal).mData = String.valueOf(distance * 2);
-        }
+//        SimpleModel modelCal = modelList.get(POSITION_CAL);
+//        if (modelCal instanceof  RunningDataModel) {
+//            // TODO: 2019/5/10 卡路里计算
+//            ((RunningDataModel) modelCal).mData = String.valueOf(distance * 2);
+//        }
         mSimpleAdapter.notifyDataSetChanged();
     }
 
