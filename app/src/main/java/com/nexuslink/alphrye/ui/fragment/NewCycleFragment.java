@@ -115,21 +115,21 @@ public class NewCycleFragment extends MyLazyFragment {
 
     public static final int FLAG_UPDATE_ALTITUDE = 3;
 
-    public static final int POSITION_KM = 0;
+//    public static final int POSITION_KM = 0;
 
 //    public static final int POSITION_CAL = 1;
 
 //    public static final int POSITION_ALTITUDE = 2;
 
-    public static final int POSITION_WEATHER = 1;
+    public static final int POSITION_WEATHER = 0;
 
-    public static final int POSITION_WIND_DIR = 2;
+    public static final int POSITION_WIND_DIR = 1;
 
-    public static final int POSITION_WIND_ZI = 3;
+    public static final int POSITION_WIND_ZI = 2;
 
-    public static final int POSITION_VIS = 4;
+    public static final int POSITION_VIS = 3;
 
-    public static final int POSITION_PCPN = 5;
+    public static final int POSITION_PCPN = 4;
 
     private static final String TAG = "NewCycleFragment";
 
@@ -438,7 +438,7 @@ public class NewCycleFragment extends MyLazyFragment {
         };
 
         modelList = new ArrayList<>();
-        modelList.add(POSITION_KM, new RunningDataModel("里程(KM)", "0"));
+//        modelList.add(POSITION_KM, new RunningDataModel("里程(KM)", "0"));
 //        modelList.add(POSITION_CAL, new RunningDataModel("热量(CAL)", "0"));
 //        modelList.add(POSITION_ALTITUDE, new RunningDataModel("实时海拔(M)", "0"));
         modelList.add(POSITION_WEATHER, new RunningDataModel("气温(摄氏度)", "--"));
@@ -993,23 +993,18 @@ public class NewCycleFragment extends MyLazyFragment {
      * 更新距离查询
      * @param distance
      */
-    private void updateDistance(int distance) {
-        String distanceString = String.valueOf(distance);
-        SimpleModel modelDistance = modelList.get(POSITION_KM);
-        if (modelDistance instanceof  RunningDataModel) {
-            String curDistance = ((RunningDataModel) modelDistance).mData;
-            if (distanceString.equals(curDistance)) {
-                return;
-            }
-            ((RunningDataModel) modelDistance).mData = String.valueOf(distance);
-        }
-//        SimpleModel modelCal = modelList.get(POSITION_CAL);
-//        if (modelCal instanceof  RunningDataModel) {
-//            // TODO: 2019/5/10 卡路里计算
-//            ((RunningDataModel) modelCal).mData = String.valueOf(distance * 2);
+//    private void updateDistance(int distance) {
+//        String distanceString = String.valueOf(distance);
+//        SimpleModel modelDistance = modelList.get(POSITION_KM);
+//        if (modelDistance instanceof  RunningDataModel) {
+//            String curDistance = ((RunningDataModel) modelDistance).mData;
+//            if (distanceString.equals(curDistance)) {
+//                return;
+//            }
+//            ((RunningDataModel) modelDistance).mData = String.valueOf(distance);
 //        }
-        mSimpleAdapter.notifyDataSetChanged();
-    }
+//        mSimpleAdapter.notifyDataSetChanged();
+//    }
 
     /**
      * 开启猎鹰上报服务
@@ -1205,7 +1200,7 @@ public class NewCycleFragment extends MyLazyFragment {
                     double meters = distanceResponse.getDistance();
                     // 行驶里程查询成功，行驶了meters米
                     Log.d(TAG, "onDistanceCallback: " + meters);
-                    updateDistance((int) meters);
+//                    updateDistance((int) meters);
                 } else {
                     // 行驶里程查询失败
                 }
@@ -1283,7 +1278,7 @@ public class NewCycleFragment extends MyLazyFragment {
                     double meters = distanceResponse.getDistance();
                     // 行驶里程查询成功，行驶了meters米
                     Log.d(TAG, "onDistanceCallback: " + meters);
-                    updateDistance((int) meters);
+//                    updateDistance((int) meters);
                 } else {
                     // 行驶里程查询失败
                 }
