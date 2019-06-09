@@ -26,4 +26,10 @@ public interface CommonConstance {
     String SP_STATUS_SPEED = "STATUS_SPEED";
 
     String SP_STATUS_TEST = "STATUS_TEST";
+
+    String SP_STATUS_PHONE = "PHONE";
+
+    String SP_STATUS_SPEED_MAX = "SPEED_MAX";
+
+    String SP_STATUS_LIGHT = "LIGHT";
 }
