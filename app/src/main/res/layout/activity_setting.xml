@@ -98,7 +98,7 @@
                         android:paddingRight="16dp"
                         android:textSize="16sp"
                         android:textColor="@color/color_333333"
-                        android:text="自动亮度大小（lux，推荐7-13）"/>
+                        android:text="自动亮度大小（lux，推荐10-20）"/>
 
                     <TextView
                         android:id="@+id/light_detail"

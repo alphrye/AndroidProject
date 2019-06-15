@@ -356,7 +356,8 @@ public class MapFragment extends MyLazyFragment {
                 if (aMapLocation.getErrorCode() == 0) {
                     double latitude = aMapLocation.getLatitude();
                     double longitude = aMapLocation.getLongitude();
-                    MyLogUtil.d(TAG, "onLocationChanged: latitude = " + latitude + " longitude = " + longitude);
+                    float accuracy = aMapLocation.getAccuracy();
+                    MyLogUtil.d(TAG, "onLocationChanged: latitude = " + latitude + " longitude = " + longitude + "accuracy: " + accuracy);
                     updateCurLocation(latitude, longitude);
                     if (!notNeedMoveToCurPos) {
                         mAmap.animateCamera(CameraUpdateFactory.newLatLngZoom(
