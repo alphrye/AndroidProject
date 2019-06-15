@@ -201,6 +201,10 @@ public class NewCycleFragment extends MyLazyFragment {
 
     private TextToSpeech textToSpeech;
 
+    private final float defaultSpeed = 5.0f;
+
+    private boolean isSendMsg = false;
+
     /**
      * 时间、时区改变广播
      */
@@ -227,7 +231,7 @@ public class NewCycleFragment extends MyLazyFragment {
         public void onStartTrackCallback(int status, String msg) {
             if (status == ErrorCode.TrackListen.START_TRACK_SUCEE || status == ErrorCode.TrackListen.START_TRACK_SUCEE_NO_NETWORK) {
                 // 成功启动
-                Toast.makeText(getContext(), "启动服务成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "启动服务成功", Toast.LENGTH_SHORT).show();
                 isServiceRunning = true;
                 if (!isGatherRunning) {
                     Log.d(TAG, "onStartTrackCallback 1 : trackId = " + trackId);
@@ -236,7 +240,7 @@ public class NewCycleFragment extends MyLazyFragment {
                 }
             } else if (status == ErrorCode.TrackListen.START_TRACK_ALREADY_STARTED) {
                 // 已经启动
-                Toast.makeText(getContext(), "服务已经启动", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "服务已经启动", Toast.LENGTH_SHORT).show();
                 isServiceRunning = true;
 
                 if (!isGatherRunning) {
@@ -256,7 +260,7 @@ public class NewCycleFragment extends MyLazyFragment {
         public void onStopTrackCallback(int status, String msg) {
             if (status == ErrorCode.TrackListen.STOP_TRACK_SUCCE) {
                 // 成功停止
-                Toast.makeText(getContext(), "停止服务成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "停止服务成功", Toast.LENGTH_SHORT).show();
                 isServiceRunning = false;
                 isGatherRunning = false;
             } else {
@@ -271,7 +275,7 @@ public class NewCycleFragment extends MyLazyFragment {
         @Override
         public void onStartGatherCallback(int status, String msg) {
             if (status == ErrorCode.TrackListen.START_GATHER_SUCEE) {
-                Toast.makeText(getContext(), "定位采集开启成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "定位采集开启成功", Toast.LENGTH_SHORT).show();
                 isGatherRunning = true;
 
                 //开启猎鹰采集成功，开启定时器，执行定时查询任务
@@ -284,7 +288,7 @@ public class NewCycleFragment extends MyLazyFragment {
                 };
                 mQueryTimer.schedule(queryTask, 2000, 2000);
             } else if (status == ErrorCode.TrackListen.START_GATHER_ALREADY_STARTED) {
-                Toast.makeText(getContext(), "定位采集已经开启", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "定位采集已经开启", Toast.LENGTH_SHORT).show();
                 isGatherRunning = true;
             } else {
                 Log.w(TAG, "error onStartGatherCallback, status: " + status + ", msg: " + msg);
@@ -297,7 +301,7 @@ public class NewCycleFragment extends MyLazyFragment {
         @Override
         public void onStopGatherCallback(int status, String msg) {
             if (status == ErrorCode.TrackListen.STOP_GATHER_SUCCE) {
-                Toast.makeText(getContext(), "定位采集停止成功", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "定位采集停止成功", Toast.LENGTH_SHORT).show();
                 isGatherRunning = false;
                 mQueryTimer.cancel();
             } else {
@@ -765,35 +769,59 @@ public class NewCycleFragment extends MyLazyFragment {
     }
 
     private void showMsgDialog() {
+        String phone = SPUtil.getString(CommonConstance.SP_STATUS_PHONE);
         Context context = getContext();
         if (context == null) {
             return;
         }
         new AlertDialog.Builder(context)
                 .setTitle("提示")
-                .setMessage("发送短信开启开启监督骑行？")
+                .setMessage("发送短信到"+phone+"，开启开启监督骑行？")
                 .setPositiveButton("是", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         sendMsg();
+                        isSendMsg = true;
                     }
                 })
                 .setNegativeButton("否", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        isSendMsg = false;
                     }
                 }).show();
     }
 
     private void sendMsg() {
+        String phone = SPUtil.getString(CommonConstance.SP_STATUS_PHONE);
+        if (!TextUtils.isDigitsOnly(phone)) {
+            toast("号码错误");
+            return;
+        }
         SmsManager smsManager = SmsManager.getDefault();
         String content = "【骑车帮】您的好友邀请您进行监督骑行，骑行期间您可以了解好友的实时信息。验证信息服务ID：" + serverId + " 终端号：" + terminalId;
         ArrayList<String> list = smsManager.divideMessage(content);
         for (int i = 0; i < list.size(); i++) {
-            smsManager.sendTextMessage("18510167427", null, list.get(i), null, null);
+            smsManager.sendTextMessage(phone, null, list.get(i), null, null);
         }
     }
+
+    private void sendBackMsg() {
+        String phone = SPUtil.getString(CommonConstance.SP_STATUS_PHONE);
+        if (!TextUtils.isDigitsOnly(phone)) {
+            toast("号码错误");
+            return;
+        }
+
+        SmsManager smsManager = SmsManager.getDefault();
+        String content = "【骑车帮】您的好友已安全抵达目的地";
+        ArrayList<String> list = smsManager.divideMessage(content);
+        for (int i = 0; i < list.size(); i++) {
+            smsManager.sendTextMessage(phone, null, list.get(i), null, null);
+        }
+    }
+
 
     /**
      * 暂停骑行点击事件
@@ -854,6 +882,10 @@ public class NewCycleFragment extends MyLazyFragment {
         recordTime = 0;
         mChronometer.setBase(SystemClock.elapsedRealtime());
         mChronometer.stop();
+
+        if (isSendMsg) {
+            sendBackMsg();
+        }
 
         //检查值得合法性：isServiceRunning应该为true，isServiceRunning应该为true
         if (!isServiceRunning || !isGatherRunning) {
@@ -960,7 +992,14 @@ public class NewCycleFragment extends MyLazyFragment {
             return;
         }
         float speed = location.getSpeed();
-        if (speed >= 5) {
+        String maxSpeed = SPUtil.getString(CommonConstance.SP_STATUS_SPEED_MAX);
+        float maxSpeedFloat = defaultSpeed;
+        if (TextUtils.isDigitsOnly(maxSpeed)) {
+            maxSpeedFloat = Float.valueOf(maxSpeed);
+        }
+        float speedPerSec = maxSpeedFloat / 3.6f;
+        Log.d(TAG, "updateSpeedByLocation: " + speedPerSec);
+        if (speed >= speedPerSec) {
             boolean isSpeedOn = SPUtil.getBoolean(CommonConstance.SP_STATUS_SPEED, true);
             if (isSpeedOn && !isCountDonw) {
                 startAuto("骑车帮提醒您：请减速慢行，道路千万条，安全第一条。行车不规范，亲人两行泪");

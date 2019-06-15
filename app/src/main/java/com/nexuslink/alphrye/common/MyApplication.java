@@ -3,6 +3,8 @@ package com.nexuslink.alphrye.common;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.support.multidex.MultiDex;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.nexuslink.alphrye.helper.ActivityStackManager;
 import com.hjq.toast.ToastUtils;
@@ -65,11 +67,17 @@ public class MyApplication extends UIApplication implements SensorHelper.ISensor
         if (type == Sensor.TYPE_LIGHT) {
             float value = values[0];
             // TODO: 2019/1/5  本地sp获取状态，检查手动开启，设置状态
-            Boolean isAuto = SPUtil.getBoolean(CommonConstance.SP_STATUS_FLASH, false);
+            String light = SPUtil.getString(CommonConstance.SP_STATUS_LIGHT);
+            float lightFloat = FlashLightHelper.VALUE_LX_OPEN_FLASH_LIGHT;
+            if (TextUtils.isDigitsOnly(light)) {
+                lightFloat = Float.valueOf(light);
+            }
+            Log.d("FlashLight", "onSensorChange: " + value);
+            boolean isAuto = SPUtil.getBoolean(CommonConstance.SP_STATUS_FLASH, false);
             if (isAuto) {
                 FlashLightHelper
                         .getInstance()
-                        .switchFlashLight(value < FlashLightHelper.VALUE_LX_OPEN_FLASH_LIGHT, new FlashLightHelper.OnSwitchCallBack() {
+                        .switchFlashLight(value < lightFloat, new FlashLightHelper.OnSwitchCallBack() {
                             @Override
                             public void onSwitch(boolean b) {
                                 EventBus.getDefault().post(new FlashlightChangeEvent(b));
