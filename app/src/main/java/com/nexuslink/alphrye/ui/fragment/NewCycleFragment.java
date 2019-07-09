@@ -222,6 +222,7 @@ public class NewCycleFragment extends MyLazyFragment {
                 return;
             }
             mSimpleAdapter.notifyItemChanged(pos, FLAG_TIME_START);
+            Log.d(TAG, "onStartOrPause: master上提交的一个测试");
 
             //开启猎鹰轨迹上报
             startEagleReport();
